@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const accountsGroup = useAccountsGroup()
+const accountsGroup = useAccountsCollection()
 const {view} = storeToRefs(accountsGroup)
 </script>
 

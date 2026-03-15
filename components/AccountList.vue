@@ -1,12 +1,18 @@
 <template>
-  <div class="space-y-8 px-3">
-    <h3 v-if="isCollection && view === 'collections'">{{ currentCollection }}</h3>
+  <div class="px-3">
+    <div class="flex justify-between items-center py-3">
+      <div class="flex gap-3">
+        <p v-if="view === 'collections'" @click="isCollection = false" class="ring rounded-md cursor-pointer px-2 py-1 text-sm w-fit">BACK</p>
+        <h3 v-if="isCollection && view === 'collections'" class="uppercase font-bold">{{ currentCollection }}</h3>
+      </div>
+      <p class="uppercase font-mono">{{ selectedBank }} ({{selectedBank === 'all'  ? accounts.length : numberOfAccountsFiltered }})</p>
+    </div>
 
     <div v-if="store.filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-8 bg-white">
       No accounts found. add some accounts!
     </div>
+
     <div v-for="category in store.filteredAndCategorizedAccounts" :key="category.bankName" class="bg-white">
-      <h3 v-if="view === 'bank'" class="text-lg font-bold py-2 pl-4">{{ category.bankName }}</h3>
       <AccountItem 
       v-for="account in category.accounts" 
       :key="account.id" 
@@ -18,10 +24,12 @@
 </template>
 
 <script setup lang="ts">
-import { useAccountStore } from '~/stores/useAccountStore'
 
-const groupStore = useAccountsGroup()
-const {isCollection, currentCollection, view} = storeToRefs(groupStore)
+const accountStore = useAccountStore()
+const {selectedBank, numberOfAccountsFiltered, accounts} = storeToRefs(accountStore)
+
+const collections = useAccountsCollection()
+const {isCollection, currentCollection, view} = storeToRefs(collections)
 
 const store = useAccountStore()
 const {popUp} = storeToRefs(store)

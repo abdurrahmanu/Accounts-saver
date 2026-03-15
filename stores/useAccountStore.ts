@@ -9,13 +9,14 @@ export interface Account {
   accountNumber: string
   selected: boolean
   favourite: boolean
+  phoneNumber: string
 }
 
 export const useAccountStore = defineStore('accountStore', () => {
   const addNewAccount = ref(false)
   const accounts = ref<Account[]>([])
   const searchQuery = ref('')
-  const selectedBank = ref('')
+  const selectedBank = ref('all')
   const popUp = ref(false)
 
   // Load from LocalStorage for offline persistence (Client-side only)
@@ -78,7 +79,8 @@ export const useAccountStore = defineStore('accountStore', () => {
 
     // 2. Bank filter
     if (selectedBank.value) {
-      result = result.filter(acc => acc.bank === selectedBank.value)
+      if (selectedBank.value === 'all') result = accounts.value
+      else result = result.filter(acc => acc.bank === selectedBank.value)
     }
 
     // 3. Categorize by Bank
@@ -97,6 +99,10 @@ export const useAccountStore = defineStore('accountStore', () => {
     }))
   })
 
+  const numberOfAccountsFiltered = computed(() => {
+    return filteredAndCategorizedAccounts.value.filter(acc => acc.bankName.toLowerCase() === selectedBank.value.toLowerCase())[0]?.accounts.length
+  })
+
   return { 
     popUp,
     accounts, 
@@ -104,6 +110,7 @@ export const useAccountStore = defineStore('accountStore', () => {
     selectedBank, 
     uniqueBanks, 
     addNewAccount,
+    numberOfAccountsFiltered,
     filteredAndCategorizedAccounts, 
     addAccount,
     deleteAccount

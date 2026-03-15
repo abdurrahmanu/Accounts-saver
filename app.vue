@@ -6,7 +6,7 @@
     </header>
     
     <div class="max-w-5xl mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-x-4">
         
         <div class="lg:col-span-1">
           <AccountForm />
@@ -15,7 +15,7 @@
         <ViewType/>
         
         <SearchBar />
-        <GroupsList v-if="view === 'collections'" />
+        <Collections v-if="view === 'collections'" />
 
         <div class="lg:col-span-2 space-y-3 bg-white">
           <ClientOnly>
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-const accountsGroup = useAccountsGroup()
+const accountsGroup = useAccountsCollection()
 const {view} = storeToRefs(accountsGroup)
 
 const accountStore = useAccountStore()

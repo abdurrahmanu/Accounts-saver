@@ -12,13 +12,20 @@
     <div class="md:w-64">
       <ul class="flex py-5 pt-0 gap-2 flex-wrap">
         <li 
+        @click="selectedBank = 'all'"
+        :class="{
+          'ring-green-400': selectedBank === 'all',
+          'ring-slate-300': selectedBank !== 'all'
+        }" 
+        class="w-fit px-2 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-2" 
+        >All</li>
+        <li 
         @click="selectedBank = bank"
         :class="{
-          'bg-green-300 hover:bg-green-300': selectedBank === bank,
-          'shrink-0': index === uniqueBanks.length - 1,
-          'grow': index !== uniqueBanks.length - 1
+          'ring-green-400': selectedBank === bank,
+          'ring-slate-300': selectedBank !== bank
         }" 
-        class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer py-1 rounded-md whitespace-nowrap text-xs ring-[1px] ring-slate-300" 
+        class="w-fit px-2 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-2 " 
         v-for="(bank, index) in uniqueBanks" 
         :key="index">{{ bank }}</li>
       </ul>

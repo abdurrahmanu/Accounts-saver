@@ -1,5 +1,5 @@
 <template>
-  <div>    
+  <div class="border-y border-slate-300">    
     <div class="bg-white p-6 py-2 bspace-y-6">
       
       <div class="flex justify-between items-center py-2">
@@ -33,6 +33,11 @@
             <input v-model="form.nickname" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Plumber">
           </div>
 
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Phone Number (optional)</label>
+            <input v-model="form.phoneNumber" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="09123456700">
+          </div>
+
           <div class="flex items-center space-x-3 py-2">
             <input type="radio" class="appearance-none rounded-md p-2 border-2">
             <span class="text-sm">Add to Favorites</span>
@@ -46,23 +51,38 @@
       <hr class="border-gray-200" />
 
       <div class="pt-5">
-        <h3 class="text-lg font-bold mb-2 text-gray-800">Import Accounts</h3>
-        <p class="text-sm text-gray-500 mb-3">Paste accounts in JSON format</p>
-        
-        <textarea 
+        <div>
+          <div class="flex items-center justify-between space-x-3 text-sm">
+          <h3 class="text-lg font-bold mb-2 text-gray-800">Import Accounts</h3>
+          <div 
+          @click.self="toggleJSONForm = !toggleJSONForm" 
+          class="my-1 w-19 relative h-6 rounded-full ring ring-gray-300 flex">
+          <div 
+          :class="{
+            'absolute right-0 bg-green-400' : toggleJSONForm,
+            'relative bg-slate-400': !toggleJSONForm
+          }" 
+            class="px-5 h-0 py-3 rounded-full transition-all duration-150"></div>
+          </div>
+        </div>
+
+        <div v-if="toggleJSONForm">
+          <p class="text-sm text-gray-500 mb-3">Paste accounts in JSON format</p>
+          
+          <textarea 
           v-model="bulkJsonText" 
           rows="4" 
           class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border font-mono text-xs bg-gray-50"
           placeholder='[ { "name": "Ibrahim Yakubu", "bank": "Jaiz Bank", "accountNumber": "123233" }, { "name": "Abdu Zarewa", "bank": "GTB", "accountNumber": "123345" } ]'
-        ></textarea>
-        
-        <button 
+          ></textarea>
+          
+          <button 
           @click="handlePastedJson" 
           class="mt-2 w-full bg-gray-800 text-white font-bold py-2 px-4 rounded-md hover:bg-black transition text-sm"
-        >
+          >
           Import Pasted JSON
         </button>
-
+        
         <div class="py-4 space-y-2">
           <div class="text-sm text-gray-500 font-medium">Upload a json file:</div>
           <div class="flex items-center">
@@ -75,10 +95,12 @@
             >
           </div>
         </div>
-
+        
         <p v-if="importMessage" :class="importSuccess ? 'text-green-600' : 'text-red-600'" class="text-sm mt-3 font-medium text-center p-2 rounded bg-gray-50">
           {{ importMessage }}
         </p>
+      </div>
+      </div>
       </div>
     </div>
 
@@ -90,11 +112,13 @@
 import { reactive, ref } from 'vue'
 import { useAccountStore } from '~/stores/useAccountStore'
 
+const toggleJSONForm = ref(false)
+
 const accountStore = useAccountStore()
 const {addNewAccount} = storeToRefs(accountStore)
 
 // --- Manual Form Logic ---
-const form = reactive({ name: '', nickname: '', bank: '', accountNumber: '' , favourite: false, selected: false})
+const form = reactive({ name: '', nickname: '', bank: '', accountNumber: '' , phoneNumber: '', favourite: false, selected: false})
 
 const banksList = ref([
   'Access Bank Plc', 'UBA United Bank for Africa', 'Zenith Bank Plc', 'GTBank Guarantee Trust Holding Company GTCO', 'First Bank', 'Opay', 'Palmpay', 'Kuda Bank', 'Fidelity Bank', 'Ecobank', 'FCMB First City Monument Bank', 'MoniePoint', 'Polaris Bank', 'Keystone Bank', 'Providus Bank', 'Titan Trust Bank', 'Unity Bank', 'Standard Chartered Bank', 'Globus Bank', 'Parallex Bank', 'Jaiz Bank', 'Premium Trust Bank', 'Sterling Bank', 'Stanbic IBTC', 'Lotus Bank', 'Signature Bank', 'Alternative Bank (AltBank)', 'SunTrust Bank'
@@ -109,7 +133,7 @@ const store = useAccountStore()
 
 const submitForm = () => {
   store.addAccount({ ...form })
-  form.name = ''; form.nickname = ''; form.bank = ''; form.accountNumber = '', form.selected = false, form.favourite = false
+  form.name = ''; form.nickname = ''; form.bank = ''; form.phoneNumber = '', form.accountNumber = '', form.selected = false, form.favourite = false
 }
 
 // --- Bulk Import Logic (Shared) ---
@@ -128,6 +152,7 @@ const processJsonArray = (parsedData: any) => {
         bank: item.bank,
         accountNumber: String(item.accountNumber),
         favourite: item.favourite,
+        phoneNumber: item.phoneNumber,
         selected: item.selected,
       })
       addedCount++
