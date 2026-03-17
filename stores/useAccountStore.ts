@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
 
 export interface Account {
   id: string
@@ -10,14 +9,22 @@ export interface Account {
   selected: boolean
   favourite: boolean
   phoneNumber: string
+  collection: string
 }
 
 export const useAccountStore = defineStore('accountStore', () => {
+  const accountsCollection = useAccountsCollection()
+  const {collections} = storeToRefs(accountsCollection)
+
+  const currentCollection = computed(() => accountsCollection.currentCollection)
+  const view = computed(() => accountsCollection.view)
+  
   const addNewAccount = ref(false)
   const accounts = ref<Account[]>([])
   const searchQuery = ref('')
   const selectedBank = ref('all')
   const popUp = ref(false)
+  const openAccountsDropdown = ref(false)
 
   // Load from LocalStorage for offline persistence (Client-side only)
   if (import.meta.client) {
@@ -34,7 +41,6 @@ export const useAccountStore = defineStore('accountStore', () => {
     }
   }, { deep: true })
 
-
   // Actions
   const addAccount = (account: Omit<Account, 'id'>) => {
     accounts.value.push({
@@ -43,17 +49,23 @@ export const useAccountStore = defineStore('accountStore', () => {
     })
   }
 
-  const deleteAccount = (del_accounts: string[]) => {         
-    if (del_accounts.length === accounts.value.length) {
-      accounts.value = []
-    } else {      
-      let id = ''
+  const deleteItem = (del_: string[]) => {       
+    if (view.value === 'collections') {
+      console.log('sad', del_.length, collections.value);
+    }      
 
-      for (let index = 0; index < del_accounts.length; index++) {  
-        id = del_accounts[index];
-        accounts.value = accounts.value.filter(acc => acc.id !== id)
-      }      
-    }
+    else if (view.value === 'bank') {
+      if(del_.length === accounts.value.length) {
+        accounts.value = []
+      } else {
+        let id = ''
+
+        for (let index = 0; index < del_.length; index++) {  
+          id = del_[index];
+          accounts.value = accounts.value.filter(acc => acc.id !== id)
+        }      
+      }
+     }
 
     popUp.value = !popUp.value
   }
@@ -64,7 +76,7 @@ export const useAccountStore = defineStore('accountStore', () => {
     return [...new Set(banks)].sort()
   })
 
-  const filteredAndCategorizedAccounts = computed(() => {
+  const filteredAndCategorizedAccounts = computed(() => {    
     let result = accounts.value
 
     // 1. Search filter
@@ -76,11 +88,15 @@ export const useAccountStore = defineStore('accountStore', () => {
         acc.accountNumber.includes(q)
       )
     }
-
+    
     // 2. Bank filter
     if (selectedBank.value) {
       if (selectedBank.value === 'all') result = accounts.value
       else result = result.filter(acc => acc.bank === selectedBank.value)
+    }    
+
+    if (currentCollection.value) {       
+      result = result.filter(acc => acc.collection && acc.collection.toLowerCase() === currentCollection.value.toLowerCase())            
     }
 
     // 3. Categorize by Bank
@@ -100,7 +116,7 @@ export const useAccountStore = defineStore('accountStore', () => {
   })
 
   const numberOfAccountsFiltered = computed(() => {
-    return filteredAndCategorizedAccounts.value.filter(acc => acc.bankName.toLowerCase() === selectedBank.value.toLowerCase())[0]?.accounts.length
+return filteredAndCategorizedAccounts.value.filter((acc: Account & {bankName: string}) => acc.bankName.toLowerCase() === selectedBank.value.toLowerCase())[0]?.accounts.length
   })
 
   return { 
@@ -111,8 +127,9 @@ export const useAccountStore = defineStore('accountStore', () => {
     uniqueBanks, 
     addNewAccount,
     numberOfAccountsFiltered,
+    openAccountsDropdown,
     filteredAndCategorizedAccounts, 
     addAccount,
-    deleteAccount
+    deleteItem
   }
 })

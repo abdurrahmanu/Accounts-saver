@@ -1,20 +1,30 @@
 <script lang="ts" setup>
 import { useSelectListStore } from '~/stores/useSelectListStore';
 
-const activateList = useSelectListStore()
-const {selectedList} = storeToRefs(activateList)
-const {selectAll, cancel, delete_} = activateList
+const selectMode = useSelectListStore()
+const {selectedList, ongoingSelection} = storeToRefs(selectMode)
+const {selectAll, cancel, delete_} = selectMode
+
+const svgs = {
+    'Add Favourite': '',
+    'Edit': '',
+    'Details': '',
+    'Delete': '',
+    'Select': '',
+    'Cancel': '',
+}
 
 const accountStore = useAccountStore()
 const {popUp} = storeToRefs(accountStore)
 
 const options = computed(() => {
+
     return [
-        'Details',
-        'Edit',
+        'Add Favourite',
+        `${selectedList.value.length === 1 ? 'Edit' : 'Details'}`,
         selectedList.value.length < 2 ? 'Delete' : 'Delete All',
+        'Select All',
         'Cancel',
-        'Select All'
     ]
 })
 
@@ -29,10 +39,15 @@ const useOption = (option: string) => {
 </script>
 
 <template>
-    <transition v-if="selectedList.length" name="slide-in">
+    <transition v-if="ongoingSelection" name="slide-in">
         <div class="fixed w-full bottom-0 left-0 bg-white">
             <ul class="flex">
-                <li @click="useOption(option)" v-for="(option, index) in options" :key="index" class="flex-1 text-center hover:bg-slate-200 p-2 py-5 border-t-slate-200 border-t">{{ option }}</li>
+                <div @click="useOption(option)" v-for="(option, index) in options" :key="index" class="flex-1 text-xs text-center hover:bg-slate-200 p-2 py-5 border-t-slate-200 border-t">
+                    <div>
+                        <!-- <img :src="svgs['option']" alt=""> -->
+                    </div>
+                    <p>{{ option }}</p>
+                </div>
             </ul>
         </div>
     </transition>

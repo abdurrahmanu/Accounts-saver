@@ -1,5 +1,5 @@
 <template>
-  <div class="px-3">
+  <div v-if="showAccountsList" class="px-3">
     <div class="flex justify-between items-center py-3">
       <div class="flex gap-3">
         <p v-if="view === 'collections'" @click="isCollection = false" class="ring rounded-md cursor-pointer px-2 py-1 text-sm w-fit">BACK</p>
@@ -24,12 +24,11 @@
 </template>
 
 <script setup lang="ts">
-
 const accountStore = useAccountStore()
-const {selectedBank, numberOfAccountsFiltered, accounts} = storeToRefs(accountStore)
+const {selectedBank, numberOfAccountsFiltered, accounts, filteredAndCategorizedAccounts} = storeToRefs(accountStore)
 
 const collections = useAccountsCollection()
-const {isCollection, currentCollection, view} = storeToRefs(collections)
+const {isCollection, currentCollection, view, showAccountsList} = storeToRefs(collections)
 
 const store = useAccountStore()
 const {popUp} = storeToRefs(store)

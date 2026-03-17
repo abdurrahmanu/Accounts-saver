@@ -34,20 +34,21 @@ import { storeToRefs } from 'pinia';
 import { useAccountStore, useSelectListStore, type Account } from '#imports';
 
 const store = useAccountStore()
-const { deleteAccount } = store
+const { deleteItem } = store
 const { popUp } = storeToRefs(store)
 
 const selectList = useSelectListStore()
-const { selectedAccounts } = storeToRefs(selectList)
+const { selectedAccounts, selectedList } = storeToRefs(selectList)
+
+const collectionsStore = useAccountsCollection()
+const {view} = storeToRefs(collectionsStore)
 
 const isSingle = computed(() => selectedAccounts.value.length === 1)
 const singleAccount = computed(() => isSingle.value ? selectedAccounts.value[0] : undefined)
 
 const handleDelete = () => {
-    const idsToDelete = selectedAccounts.value.map(account => account.id)
-    deleteAccount(idsToDelete)
+    deleteItem(selectedList.value)
     popUp.value = false
-    
     selectList.cancel() 
 }
 </script>

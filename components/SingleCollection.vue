@@ -1,12 +1,24 @@
 <script lang="ts" setup>
-const groupStore = useAccountsCollection()
-const {openCollection} = groupStore
+const accountsCollection = useAccountsCollection()
+const {openCollection} = accountsCollection
+
+const selectMode = useSelectListStore()
+const {selectedList, ongoingSelection} = storeToRefs(selectMode)
 
 const props = defineProps<{
-  collections: String,
+  collection: string,
 }>()
 </script>
 
 <template>
-    <div @click="openCollection(collection)" class="w-20 h-20 md:w-50 md:h-50 flex items-center justify-center grow hover:bg-green-100 rounded-lg uppercase ring ring-slate-300" v-for="(collection, index) in collections" :key="index">{{ collection }}</div>
+    <div
+      @touchstart.prevent="selectMode.start(collection)" 
+      @touchend="selectMode.stop(collection)" 
+      @mouseup="selectMode.stop(collection)"
+      @mousedown="selectMode.start(collection)"
+      :class="{
+        'bg-blue-100 hover:bg-blue-100': selectedList.includes(collection),
+        'hover:bg-green-100': !selectedList.includes(collection)
+      }"
+      @click="!ongoingSelection && openCollection(collection)" class="w-[30%] h-32 `max-w-[200px]` md:w-50 md:h-50 flex items-center justify-center grow rounded-lg uppercase ring ring-slate-300" >{{ collection }}</div>
 </template>

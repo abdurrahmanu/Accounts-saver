@@ -5,32 +5,37 @@ import { useAccountStore, type Account } from '#imports'
 export const useSelectListStore = defineStore('selectList', () => {
   const useAccount = useAccountStore()
   const {accounts} = storeToRefs(useAccount)
-  const {deleteAccount} = useAccount
+  const {deleteItem} = useAccount
 
+  const ongoingSelection = ref(false)
   const activateDelay = 700
   const selectedList = ref<string[]>([])
   const event = ref<'up' | 'down'>()
   const activateTimer = ref<ReturnType<typeof setTimeout>  | undefined>(undefined)
 
   const selectedAccounts = computed<Account[]>(() => {
-    return accounts.value.filter(account => selectedList.value.includes(account.id))
+    return accounts.value.filter((account: Account) => selectedList.value.includes(account.id))
   })
 
-  const start = (id: string) => {      
-      // remove item from the list
+  const start = (id: string) => {              
+      // remove item from the list      
       let listSize = selectedList.value.length
       let alreadySelectedItem = selectedList.value.indexOf(id)
-      if (alreadySelectedItem !== -1) {
+      if (alreadySelectedItem !== -1) {        
         selectedList.value.splice(alreadySelectedItem, 1)          
+        // if (!selectedList.value.length) ongoingSelection.value = false
         return
       } else {
-        if (listSize) selectedList.value.push(id)
+        if (ongoingSelection.value) {
+          selectedList.value.push(id)
+        }
         else {
           activateTimer.value = setTimeout(() => {
             selectedList.value.push(id)          
+            ongoingSelection.value = true
           }, activateDelay)
         }
-      }
+      }      
   }
 
   const stop = (id: string) => {
@@ -54,13 +59,13 @@ export const useSelectListStore = defineStore('selectList', () => {
   }
 
   const cancel = () => {
-    if (selectedList.value.length) {
-      selectedList.value = []
-    }
+    selectedList.value = []
+    ongoingSelection.value = false
   }
 
   const delete_ = () => {
-    deleteAccount(selectedList.value)
+    deleteItem(selectedList.value)
+    ongoingSelection.value = false
   }
 
 
@@ -68,6 +73,7 @@ export const useSelectListStore = defineStore('selectList', () => {
     activateTimer,
     selectedAccounts,
     selectedList,
+    ongoingSelection,
     event,
     start,
     stop,

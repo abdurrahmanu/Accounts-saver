@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-const accountsGroup = useAccountsCollection()
-const {view} = storeToRefs(accountsGroup)
+const accountsCollection = useAccountsCollection()
+const {view} = storeToRefs(accountsCollection)
 </script>
 
 <template>
-    <div class="px-5 py-2">
-        <ul class="flex text-center transition-all duration-200">
-            <li :class="{'bg-green-200': view === 'collections'}" @click="view = 'collections'" class="flex-1 border-r border border-slate-400 border-r-slate-400 px-5 py-2 hover:bg-green-300 rounded-l-full">GROUPS</li>
-            <li :class="{'bg-green-200': view === 'bank'}" @click="view = 'bank'" class="flex-1 px-5 py-2 border border-slate-400 border-l-0 rounded-r-full hover:bg-green-300">BANKS</li>
+    <div class="px-5 py-7">
+        <ul class="flex text-center gap-3 transition-all duration-200">
+            <li :class="{'bg-blue-300 hover:bg-blue-300': view === 'collections'}" @click="view = 'collections'" class="rounded-lg flex-1 border-r border border-slate-400 px-5 py-3 hover:bg-blue-200">GROUPS</li>
+            <li :class="{'bg-blue-300 hover:bg-blue-300': view === 'bank'}" @click="view = 'bank'" class="rounded-lg flex-1 px-5 py-3 border border-slate-400  hover:bg-blue-200">BANKS</li>
         </ul>
     </div>
 </template>

@@ -2,8 +2,10 @@
   <div :class="{
     'bg-blue-100': selectedList.includes(account.id)
   }"
-  @mousedown="activateList.start(account.id)" 
-  @mouseup="activateList.stop(account.id)" 
+  @touchstart.prevent="selectMode.start(account.id)" 
+  @touchend="selectMode.stop(account.id)" 
+  @mouseup="selectMode.stop(account.id)"
+  @mousedown="selectMode.start(account.id)"
   class="px-4 py-2 border-y border-gray-200 hover:bg-blue-200 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
     <div class="flex justify-between w-full">
       <div class="flex gap-2 items-start">
@@ -12,6 +14,7 @@
           <p class="text-gray-800 mt-1 font-mono bg-gray-200 inline-block px-2 py-1 rounded">
         {{ account.accountNumber }}
           </p>
+          <p v-if="selectedBank === 'all'">{{ account.bank }}</p>
         </div>
       </div>
       
@@ -27,12 +30,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useAccountStore, type Account } from '~/stores/useAccountStore'
-import { useSelectListStore } from '~/stores/useSelectListStore';
+const selectMode = useSelectListStore()
+const {selectedList} = storeToRefs(selectMode)
 
-const activateList = useSelectListStore()
-const {selectedList} = storeToRefs(activateList)
+const accountStore = useAccountStore()
+const {selectedBank} = storeToRefs(accountStore)
+
+const accountsCollection = useAccountsCollection()
+const {view} = storeToRefs(accountsCollection)
 
 const emit = defineEmits<{
   accountID: [id: string]

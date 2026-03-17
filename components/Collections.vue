@@ -1,10 +1,82 @@
-<script setup>
-const accountsGroup = useAccountsCollection()
-const {collections, isCollection, currentCollection, view} = storeToRefs(accountsGroup)
+<script lang="ts" setup>
+const accountsCollection = useAccountsCollection()
+const {collections, showAccountsList, createNewcollection, view} = storeToRefs(accountsCollection)
+const {createCollection} = accountsCollection
+
+const accountStore = useAccountStore()
+const {accounts, openAccountsDropdown} = storeToRefs(accountStore)
+
+const call = () => openAccountsDropdown.value = false
+
+
+const form = reactive<collectionForm>({
+    name: "",
+    selectedAccounts: []
+})
+
+const successMessage = ref(false)
+
+const submitForm = () => {
+    createCollection(form)
+    
+    if (form.name.length > 0) {
+        setTimeout(() => {  
+            successMessage.value = true
+            form.name = ""
+            form.selectedAccounts = []
+        }, 0);
+    }
+
+    setTimeout(() => {
+        successMessage.value = false
+    }, 800);
+}
 </script>
 
 <template>
-    <div v-if="view === 'collections' && !isCollection" class="flex flex-wrap h-full flex-1 gap-5 p-5">
-        <SingleCollection :collections="collections" />
+    <div v-if="view === 'collections' && !showAccountsList" class="pt-4 border-t border-t-slate-300">
+        <div class="flex items-center mt-3 justify-between px-3">
+            <div>
+                <h3 v-if="createNewcollection" class="font-bold pl-2">New Collection</h3>
+            </div>
+            <button @click="createNewcollection = !createNewcollection" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 rounded-md">{{ createNewcollection ? 'Close Form' : 'Create New Collection' }}</button>
+        </div>
+
+        <div class="flex flex-wrap h-full flex-1 gap-5 p-5">
+            <SingleCollection 
+            v-for="(collection, index) in collections" 
+            :key="index"
+            v-if="!createNewcollection" 
+            :collection="collection" />
+
+            <form v-else @submit.prevent="submitForm" class="space-y-3">
+                <div class="space-y-1">
+                    <label class="block font-medium text-gray-700">Full Name</label>
+                    <input v-model="form.name" type="text" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Aliyu Balarabe">
+                </div>
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Accounts List</label>
+                    <div class="max-h-80 bg-white rounded-md ring ring-slate-300 overflow-y-scroll">
+                        <p @click="openAccountsDropdown = !openAccountsDropdown" class="text-center px-10 cursor-pointer py-2 bg-slate-200">Add Accounts to Collection</p>
+                        <div v-if="openAccountsDropdown" v-for="(account, index) in accounts" :key="index">
+                            <label v-if="openAccountsDropdown" class="touch-friendly flex items-center justify-between pl-3 hover:bg-slate-200">
+                                <input 
+                                class="mt-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"  
+                            type="checkbox" 
+                            :value="account.id" 
+                            v-model="form.selectedAccounts">
+                            <div class="text-sm p-3 flex-1">
+                                <p class="block font-medium text-gray-700 whitespace-nowrap" for="">{{ account.name }}</p>
+                                <p>{{ account.accountNumber }}</p>
+                                <p>{{ account.bank }}</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div class="relative">
+                <button type="submit" class="bg-green-300 hover:bg-green-400 rounded-md ring ring-slate-200 px-3 py-2 w-full">Create Collection</button>
+                <p v-if="successMessage" class="text-sm text-green-600 text-center font-bold">Collection created!</p>
+            </form>
+        </div>
     </div>
 </template>

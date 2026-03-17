@@ -1,0 +1,27 @@
+interface User {
+    id: string;
+    username: string;
+}
+
+type UserWithrole = User & {role: string}
+
+or
+
+interface UserWithRole extends User {
+    role: string
+}
+
+type UserWrapper = {
+    role: string;
+    user: User // user {id: 'asdf', username: 'asdfadf}
+}
+
+
+// Pick one out of many properties
+Pick<User, 'username' | 'role' | 'name'>
+
+// Omit one or more
+Omit <User, 'id' | 'email'>
+
+//make optional
+Partial<User>  or Partial<Pick<User, 'email' | 'username'>>
