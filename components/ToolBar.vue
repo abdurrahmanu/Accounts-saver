@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { useSelectListStore } from '~/stores/useSelectListStore';
+const accountStore = useAccountStore()
+const {toggleAppModal, popUp, accounts} = storeToRefs(accountStore)
 
 const selectMode = useSelectListStore()
 const {selectedList, ongoingSelection} = storeToRefs(selectMode)
-const {selectAll, cancel, delete_} = selectMode
+const {selectAll, cancel} = selectMode
 
 const svgs = {
     'Add Favourite': '',
@@ -14,25 +15,32 @@ const svgs = {
     'Cancel': '',
 }
 
-const accountStore = useAccountStore()
-const {popUp} = storeToRefs(accountStore)
-
 const options = computed(() => {
-
     return [
         'Add Favourite',
         `${selectedList.value.length === 1 ? 'Edit' : 'Details'}`,
-        selectedList.value.length < 2 ? 'Delete' : 'Delete All',
+        selectedList.value.length === accounts.value.length ? ' Delete All' : 'Delete (' + selectedList.value.length + ')',
         'Select All',
         'Cancel',
     ]
 })
 
 const useOption = (option: string) => {
-    if (option === 'Select All') selectAll()
-    else if (option === 'Cancel') cancel()
-    else if (option === 'Delete' || option === 'Delete All') {        
+    option = option.toLowerCase()    
+    if (option === 'select all') selectAll()
+    else if (option === 'cancel') cancel()
+    else if (option.includes('delete')) {   
+     
         popUp.value = !popUp.value
+    }
+    else if (option === 'edit') {
+        toggleAppModal.value = !toggleAppModal.value                
+    }
+    else if (option === 'details') {
+
+    }
+    else if (option === 'add favourite') {
+        
     }
     return option
 }

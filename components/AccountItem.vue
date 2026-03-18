@@ -17,7 +17,7 @@
           <p v-if="selectedBank === 'all'">{{ account.bank }}</p>
         </div>
       </div>
-      
+      {{ account.favourite }} {{ account.collection }}
         <button 
         @click="copyToClipboard" 
         class="sm:flex-none text-[9px] bg-gray-100 h-fit p-2 px-4 rounded-md hover:bg-slate-200 ring-1 ring-slate-400 transition"
@@ -26,7 +26,6 @@
       </button>
   </div>
   </div>
-  
 </template>
 
 <script setup lang="ts">

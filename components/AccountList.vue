@@ -1,15 +1,15 @@
 <template>
-  <div v-if="showAccountsList" class="px-3">
-    <div class="flex justify-between items-center py-3">
+  <div v-if="showAccountsList" class="px-2">
+    <div v-if="filteredAndCategorizedAccounts.length || isCollection" class="flex justify-between items-center py-5">
       <div class="flex gap-3">
         <p v-if="view === 'collections'" @click="isCollection = false" class="ring rounded-md cursor-pointer px-2 py-1 text-sm w-fit">BACK</p>
         <h3 v-if="isCollection && view === 'collections'" class="uppercase font-bold">{{ currentCollection }}</h3>
       </div>
-      <p class="uppercase font-mono">{{ selectedBank }} ({{selectedBank === 'all'  ? accounts.length : numberOfAccountsFiltered }})</p>
+      <p v-if="accounts.length" class="uppercase font-mono">{{ selectedBank }} ({{selectedBank === 'all'  ? accounts.length : numberOfAccountsFiltered }})</p>
     </div>
 
-    <div v-if="store.filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-8 bg-white">
-      No accounts found. add some accounts!
+    <div v-if="store.filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-10 bg-white">
+       No accounts found. add some accounts!
     </div>
 
     <div v-for="category in store.filteredAndCategorizedAccounts" :key="category.bankName" class="bg-white">

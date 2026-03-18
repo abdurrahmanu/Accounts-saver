@@ -16,7 +16,6 @@ type UserWrapper = {
     user: User // user {id: 'asdf', username: 'asdfadf}
 }
 
-
 // Pick one out of many properties
 Pick<User, 'username' | 'role' | 'name'>
 

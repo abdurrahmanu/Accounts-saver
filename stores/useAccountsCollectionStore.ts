@@ -14,13 +14,13 @@ export const useAccountsCollection = defineStore('accountsCollection', () => {
     
     const isCollection = ref(false)
     const currentCollection = ref('')
-    const createNewcollection = ref(false)
+    const toggleCollectionForm = ref(false)
 
     const openCollection = (collection: string) => {
       currentCollection.value = collection
       isCollection.value = true
     }
-
+    
     const createCollection = (form: collectionForm) => {            
       if (collections.value.includes(form.name) && !form.selectedAccounts.length) return // group already exists and no new account added
       if (!collections.value.includes(form.name)) collections.value.push(form.name)
@@ -43,7 +43,7 @@ export const useAccountsCollection = defineStore('accountsCollection', () => {
     isCollection,
     showAccountsList,
     currentCollection,
-    createNewcollection,
+    toggleCollectionForm,
     collections,
     view,
     createCollection,

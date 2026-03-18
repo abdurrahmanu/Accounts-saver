@@ -33,8 +33,15 @@
             <input v-model="form.phoneNumber" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="09123456700">
           </div>
 
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Collection (optional)</label>
+            <input v-model="form.collection" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="company">
+          </div>
+
           <div class="flex items-center space-x-3 py-2">
-            <input type="radio" class="appearance-none rounded-md p-2 border-2">
+            <div @click="form.favourite = !form.favourite" class="ring-1 ring-green-500 rounded-sm p-1 flex items-center justify-center">
+              <div :class="[form.favourite && 'bg-green-600']" class="rounded-sm p-2"></div>
+            </div>
             <span class="text-sm">Add to Favorites</span>
           </div>
 
@@ -42,6 +49,7 @@
             Save Single Account
           </button>
           <p v-if="successMessage" class="text-sm text-green-600 text-center font-bold">Collection created!</p>
+          <p v-if="errorMessage" class="text-sm text-red-400 text-center font-bold">Account number Exists</p>
         </form>
     </div>
   </div>
@@ -51,9 +59,10 @@
 import { reactive, ref } from 'vue'
 
 const successMessage = ref(false)
+const errorMessage = ref(false)
 
 const accountStore = useAccountStore()
-const {addNewAccount} = storeToRefs(accountStore)
+const {addNewAccount, accounts} = storeToRefs(accountStore)
 const {addAccount} = accountStore
 
 // --- Manual Form Logic ---
@@ -70,9 +79,24 @@ const filteredBanks = computed(() => {
 const showBanksList = ref(false)
 
 const submitForm = () => {
+  const clearForm = () => {
+    form.name = ''; form.nickname = '', form.bank = ''; form.phoneNumber = '', form.accountNumber = '', form.favourite = false
+  }
+
+  const accountExists = accounts.value.filter(account => account.accountNumber === form.accountNumber)[0]
+  if (accountExists) {
+    errorMessage.value = true
+    clearForm()
+
+    setTimeout(() => {
+      errorMessage.value = false
+    }, 4000);
+    return
+  }
+
   addAccount({ ...form })
   successMessage.value = true
-  form.name = ''; form.nickname = '', form.bank = ''; form.phoneNumber = '', form.accountNumber = '', form.favourite = false
+  clearForm()
   
   setTimeout(() => {
     successMessage.value = false

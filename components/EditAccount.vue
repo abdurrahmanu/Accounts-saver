@@ -1,24 +1,107 @@
 <template>
-    <div>
-        <div class="space-y-1">
-            <label class="block font-medium text-gray-700">Full Name</label>
-            <input v-model="value" type="text" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Aliyu Balarabe">
+    <div class="w-[90%] max-w-130 space-y-3 text-sm">
+        <h2 class="font-bold text-base">EDIT ACCOUNT</h2>
+        <div v-for="(value, property, index) in reducedAccount" :key="index" class="space-y-1">
+            <div class="font-medium text-gray-700 flex items-center justify-between gap-3 ring rounded-md">
+                <div class="flex items-center justify-stretch gap-2">
+                    <p class="uppercase px-3 py-1 bg-slate-200 rounded-l-md">{{ labels[property] }}:</p>
+                    <div>
+                        <input v-if="showInput[property]" v-model="form[property]" type="text" class="inline-block h-full outline-none appearance-none w-full" :placeholder="placeholders[property]">
+                        <span v-else class="capitalize">{{ value }}</span>
+                    </div>
+                </div>
+                <button @click="editAccount(property)" :class="showInput[property] ? 'bg-green-300' : 'bg-slate-200'" class="px-4 py-1 rounded-r-md">{{ showInput[property] ? 'Save' : 'Edit' }}</button>
+            </div>
         </div>
-        <div class="space-y-1">
-            <label class="block font-medium text-gray-700">Bank Name</label>
-            <input v-model="value" type="text" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Aliyu Balarabe">
-        </div>
-        <div class="space-y-1">
-            <label class="block font-medium text-gray-700">Full Name</label>
-            <input v-model="value" type="text" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Aliyu Balarabe">
-        </div>
-        <div class="space-y-1">
-            <label class="block font-medium text-gray-700">Full Name</label>
-            <input v-model="value" type="text" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Aliyu Balarabe">
+
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3 py-1">
+                <div @click="form.favourite = !form.favourite" class="ring-1 ring-green-500 rounded-sm p-1 flex items-center justify-center">
+                    <div :class="[form.favourite && 'bg-green-600']" class="rounded-sm p-2"></div>
+                </div>
+                <span class="text-sm">Add to Favorites</span>
+            </div>
+            <div class="space-x-2">
+                <button @click="toggleAppModal = false" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
+                <button v-if="formIsNotEmpty" @click="save()" class="ring px-5 py-1 bg-green-300 hover:bg-green-300 ring-slate-300 rounded-md">SAVE</button>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-const value = ref('')
+const accountStore = useAccountStore()
+const {toggleAppModal} = storeToRefs(accountStore)
+const {addAccount} = accountStore
+
+interface FieldsToggle {
+    name: boolean
+    nickname: boolean
+    bank: boolean
+    accountNumber: boolean
+    phoneNumber: boolean
+    collection: boolean
+}
+
+interface FormInterface {
+    name: string
+    nickname: string
+    bank: string
+    accountNumber: string
+    phoneNumber: string
+    favourite: boolean
+    collection: string
+}
+
+const props = defineProps<{
+    account: Account
+}>()
+
+const reducedAccount = computed(() => {    
+    const {id, favourite, selected, ...rest} = props.account
+    return rest
+})
+
+const formIsNotEmpty = computed(() => {
+    return Object.values(form).some(value => value)
+})
+
+const form = reactive({ name: '', nickname: '', bank: '', accountNumber: '' , phoneNumber: '', favourite: false, collection: ''})
+
+const placeholders = { name: 'Aliyu Musa', nickname: 'MTM', bank: 'Access Bank', accountNumber: '0123456789' , phoneNumber: '081234567', collection: 'Friend'}
+
+const labels = { name: 'Full Name', nickname: 'nickname', bank: 'bank', accountNumber: 'Account Number' , phoneNumber: 'Phone Number', collection: 'Collection'}
+
+const showInput = reactive<FieldsToggle>({ name: false, nickname: false, bank: false, accountNumber: false , phoneNumber: false, collection: false})
+
+const save = (property?: string) => {    
+    let value = form[property as keyof FormInterface]
+    let saveAll = !value && !property
+
+    
+    if (saveAll) {
+        for (const key in form) {
+            let val = form[key as keyof FormInterface]
+            if (val) addAccount(props.account, props.account.id, key, val)
+            showInput[key as keyof Fieldstoggle] = false
+            toggleAppModal.value = false
+        }
+        return
+    }
+
+    addAccount(props.account, props.account.id, property, value)
+}
+
+const editAccount = (property?: string) => {
+    if (property) {
+        if (showInput[property as keyof FieldsToggle]) {
+            let value = form[property as keyof FormInterface]
+            if (value) {
+                save(property)
+            }
+        }
+        
+        showInput[property as keyof FieldsToggle] = !showInput[property as keyof FieldsToggle]
+    }
+}
 </script>
