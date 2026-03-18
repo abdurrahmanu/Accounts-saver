@@ -1,10 +1,10 @@
 <template>
     <header class="sm:text-left py-5 shadow px-3 fixed top-0 w-full bg-white h-23 z-3 flex items-center justify-between">
       <div>
-        <h1 class="font-black font-serif text-gray-900">RETRIEVER</h1>
+        <h1 class="font-black font-mono text-gray-900">RETRIEVER</h1>
         <p class="text-gray-500 text-sm">Easily manage your accounts.</p>
       </div>
-      <p @click="toggleAddAccountForm" class="text-xs cursor-pointer flex justify-self-end ring rounded-md hover:bg-zinc-200 w-fit px-3 gap-1 h-fit py-1">{{ addNewAccount ? 'Close Form' : 'Add Account' }}</p>
+      <button @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-zinc-200 w-fit px-2 h-fit py-1">{{ addNewAccount ? 'Close Form' : 'Add Account' }}<img src="/add.svg" class="w-5"></button>
     </header>
 </template>
 

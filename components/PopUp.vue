@@ -6,13 +6,13 @@
             
             <p class="text-center text-black font-medium">
                 Are you sure you want to delete 
-                <span v-if="isSingle">this account?</span>
+                <span v-if="isSingle" class="uppercase">{{ singleAccount?.name }}</span>
                 <span v-else>these <span class="text-red-700 font-bold">{{ selectedAccounts.length }}</span> accounts?</span>
             </p>
 
-            <div v-if="isSingle" class="text-center">
-                <p class="uppercase text-xl font-mono font-bold">{{ singleAccount?.name }} {{ singleAccount?.nickname }}</p>
-                <p class="p-2 rounded-md ring-[1px] w-fit mx-auto">{{ singleAccount?.bank}} {{ singleAccount?.accountNumber }}</p>
+            <div v-if="isSingle" class="text-center space-y-2">
+                <p class="rounded-md w-fit mx-auto">{{ singleAccount?.bank}}</p>
+                <p class="rounded-md w-fit mx-auto">{{ singleAccount?.accountNumber}}</p>
             </div>
 
             <div v-else class="text-center text-sm text-red-700">

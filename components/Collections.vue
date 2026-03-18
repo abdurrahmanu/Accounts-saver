@@ -36,10 +36,13 @@ const submitForm = () => {
 <template>
     <div v-if="view === 'collections' && !showAccountsList" class="pt-4 border-t border-t-slate-300">
         <div class="flex items-center mt-3 justify-end px-3">
-            <button @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 rounded-md">{{ toggleCollectionForm ? 'Close Form' : 'Create New Collection' }}</button>
+            <button @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 flex items-center gap-2 rounded-md">{{ toggleCollectionForm ? 'Close Form' : 'Create New Collection' }} <img src="/add.svg" class="w-5"></button>
         </div>
         
-        <div v-if="collections.length === 0 && !toggleCollectionForm" class="text-center text-gray-500 py-8 bg-white">No collections found. add some accounts!</div>
+        <div v-if="collections.length === 0 && !toggleCollectionForm" class="text-center text-gray-500 py-8 bg-white">
+            <img src="/empty-box.svg" alt="" class="mx-auto w-40">
+            No collections found. add some accounts!
+        </div>
         
         <div class="flex flex-wrap h-full flex-1 gap-5 p-5">
             <SingleCollection 

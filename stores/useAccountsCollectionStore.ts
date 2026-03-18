@@ -20,7 +20,14 @@ export const useAccountsCollection = defineStore('accountsCollection', () => {
       currentCollection.value = collection
       isCollection.value = true
     }
-    
+
+    // Watch for changes and save to LocalStorage automatically
+    watch(collections, (newCollections, oldCollections) => {  
+      if (import.meta.client) {
+        localStorage.setItem('my-saved-collections', JSON.stringify(newCollections))
+      }
+    }, { deep: true })
+
     const createCollection = (form: collectionForm) => {            
       if (collections.value.includes(form.name) && !form.selectedAccounts.length) return // group already exists and no new account added
       if (!collections.value.includes(form.name)) collections.value.push(form.name)

@@ -37,12 +37,6 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   // Watch for changes and save to LocalStorage automatically
   watch(accounts, (newAccounts, oldAccounts) => {  
-    const oldCollections = oldAccounts.map(account => {id: account.id; collection: account.collection})
-
-    const accountsWithChangedCollections = newAccounts.filter((account, index) => account.id === oldCollections[index].id && account.collection !== oldCollections[index].collection)
-    
-    newAccounts.filter(account => account)
-    
     if (import.meta.client) {
       localStorage.setItem('my-saved-accounts', JSON.stringify(newAccounts))
     }
@@ -50,7 +44,6 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   // Actions
   const addAccount = (account: Omit<Account, 'id'>, id?: string, field?: string, value?: string | boolean) => {    
-    
     if (id && field && value) {      
       accounts.value = accounts.value.map(acc => {
         if (acc.id === id) {

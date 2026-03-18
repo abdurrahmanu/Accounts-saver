@@ -1,7 +1,8 @@
 <template>
   <div class="bg-slate-200 p-2 py-3 gap-2 max-w-150 mx-auto items-center">
     <div :aria-disabled="toggleCollectionForm" :class="[toggleCollectionForm && 'cursor-not-allowed']" class="space-y-3">
-      <div class="flex-1">
+      <div class="flex-1 relative flex items-center">
+        <img src="/search.svg" class="absolute w-5 right-2" alt="">
         <input 
           v-model="searchQuery" 
           type="text" 
