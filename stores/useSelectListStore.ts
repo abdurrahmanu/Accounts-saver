@@ -1,12 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
-import { useAccountStore, type Account } from '#imports'
+import { ref, computed } from 'vue'
 
 export const useSelectListStore = defineStore('selectList', () => {
-  const useAccount = useAccountStore()
-  const {accounts} = storeToRefs(useAccount)
-  const {deleteItem} = useAccount
-
+  const collectionStore = useAccountsCollection()
+  const accountStore = useAccountStore()
   const ongoingSelection = ref(false)
   const activateDelay = 700
   const selectedList = ref<string[]>([])
@@ -14,47 +11,51 @@ export const useSelectListStore = defineStore('selectList', () => {
   const activateTimer = ref<ReturnType<typeof setTimeout>  | undefined>(undefined)
 
   const selectedAccounts = computed<Account[]>(() => {
-    return accounts.value.filter((account: Account) => selectedList.value.includes(account.id))
+    return accountStore.accounts.filter((account: Account) => selectedList.value.includes(account.id))
   })
 
   const start = (id: string) => {              
-      // remove item from the list      
-      let listSize = selectedList.value.length
-      let alreadySelectedItem = selectedList.value.indexOf(id)
-      if (alreadySelectedItem !== -1) {        
-        selectedList.value.splice(alreadySelectedItem, 1)          
-        // if (!selectedList.value.length) ongoingSelection.value = false
-        return
-      } else {
-        if (ongoingSelection.value) {
-          selectedList.value.push(id)
-        }
-        else {
-          activateTimer.value = setTimeout(() => {
-            selectedList.value.push(id)          
-            ongoingSelection.value = true
-          }, activateDelay)
-        }
-      }      
+    // remove item from the list      
+    let alreadySelectedItem = selectedList.value.indexOf(id)
+    if (alreadySelectedItem !== -1) {        
+      selectedList.value.splice(alreadySelectedItem, 1)          
+      // if (!selectedList.value.length) ongoingSelection.value = false
+      return
+    } else {
+      if (ongoingSelection.value) {
+        selectedList.value.push(id)
+      }
+      else {
+        activateTimer.value = setTimeout(() => {
+          selectedList.value.push(id)          
+          ongoingSelection.value = true
+        }, activateDelay)
+      }
+    }      
   }
 
   const stop = (id: string) => {
-      if (selectedList.value.length) {
-        return
-      }
-      if (activateTimer.value) clearTimeout(activateTimer.value)
+    if (selectedList.value.length) return
+    if (activateTimer.value) clearTimeout(activateTimer.value)
   }
 
-  const selectAll = () => {
-    if (accounts.value.length) {
-      for (let index = 0; index < accounts.value.length; index++) {
-        const id = accounts.value[index].id
-
-        if (!selectedList.value.includes(id)) {
-          selectedList.value.push(id)
+  const selectAll = (view: 'collections' | 'bank') => {
+    if (view === 'bank') { 
+      if (accountStore.accounts.length) {
+        for (let index = 0; index < accountStore.accounts.length; index++) {
+          const id = accountStore.accounts[index].id
+          
+          if (!selectedList.value.includes(id)) {
+            selectedList.value.push(id)
+          }
         }
-        
       }
+    } else {      
+      collectionStore.collections.forEach(col => {
+        if (!selectedList.value.includes(col)) {
+          selectedList.value.push(col)
+        }
+      })
     }
   }
 
@@ -62,12 +63,6 @@ export const useSelectListStore = defineStore('selectList', () => {
     selectedList.value = []
     ongoingSelection.value = false
   }
-
-  const delete_ = () => {
-    deleteItem(selectedList.value)
-    ongoingSelection.value = false
-  }
-
 
   return { 
     activateTimer,
@@ -78,7 +73,6 @@ export const useSelectListStore = defineStore('selectList', () => {
     start,
     stop,
     cancel,
-    delete_,
     selectAll,
   }
 })

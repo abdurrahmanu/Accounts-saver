@@ -1,20 +1,19 @@
 <template>
-  <div class="bg-slate-200 p-2 py-3 gap-2 max-w-150 mx-auto items-center">
-    <div :aria-disabled="toggleCollectionForm" :class="[toggleCollectionForm && 'cursor-not-allowed']" class="space-y-3">
+  <div class="bg-slate-200 p-2 py-3 gap-2 max-w-150 mx-auto items-center relative">
+    <div v-if="toggleCollectionForm" class="absolute z-2 top-0 left-0 right-0 bottom-0 bg-black/40"></div>
+    <div class="space-y-3">
       <div class="flex-1 relative flex items-center">
         <img src="/search.svg" class="absolute w-5 right-2" alt="">
         <input 
           v-model="searchQuery" 
           type="text" 
-          :disabled="toggleCollectionForm"
-          :class="[toggleCollectionForm && 'cursor-not-allowed']"
           placeholder="Search name, nickname, or account..." 
-          class="outline-none w-full text-slate-600 appearance-none border-b border-b-slate-400 focus:ring-blue-500 p-2 py-1"
-        >
+          class="outline-none w-full text-slate-600 appearance-none border-b border-b-slate-400 focus:ring-blue-500 p-2 py-1">
       </div>
       
       <div class="flex items-center w-full gap-2">
-        <div class="md:w-64 h-20 ring ring-slate-300 p-2 overflow-y-scroll rounded-md bg-white w-[75%]">
+        <div class="relative md:w-64 h-20 ring ring-slate-300 p-2 overflow-y-scroll rounded-md bg-white w-[75%]">
+          <div v-if="allCollectionTiles" class="absolute z-2 top-0 left-0 right-0 bottom-0 bg-black/40"></div>
           <ul v-if="accounts.length" class="flex py-5 pt-0 gap-2 flex-wrap">
             <li 
             @click="selectedBank = 'favourites'"
@@ -54,5 +53,9 @@ const accountStore = useAccountStore()
 const {uniqueBanks, selectedBank, searchQuery, accounts} = storeToRefs(accountStore)
 
 const collectionStore = useAccountsCollection()
-const {toggleCollectionForm} = storeToRefs(collectionStore)
+const {toggleCollectionForm, isCollection, view} = storeToRefs(collectionStore)
+
+const allCollectionTiles = computed(() => {
+  return view.value === 'collections' && !isCollection.value
+})
 </script>

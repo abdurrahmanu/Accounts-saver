@@ -13,21 +13,24 @@ export interface Account {
 }
 
 export const useAccountStore = defineStore('accountStore', () => {
-  const accountsCollection = useAccountsCollection()
-  const {collections} = storeToRefs(accountsCollection)
+  const collectionStore = useAccountsCollection()
+  const {collections} = storeToRefs(collectionStore)
+  const {createCollection} = collectionStore
 
-  const currentCollection = computed(() => accountsCollection.currentCollection)
-  const view = computed(() => accountsCollection.view)
+  const selectStore = useSelectListStore()
+  const {selectedList} = storeToRefs(selectStore)
+
+  const currentCollection = computed(() => collectionStore.currentCollection)
+  const view = computed(() => collectionStore.view)
   
-  const toggleAppModal = ref(false)
+  const editModalSwitch = ref(false)
   const addNewAccount = ref(false)
   const accounts = ref<Account[]>([])
   const searchQuery = ref('')
   const selectedBank = ref('all')
-  const popUp = ref(false)
+  const deleteModalSwitch = ref(false)
   const openAccountsDropdown = ref(false)
 
-  // Load from LocalStorage for offline persistence (Client-side only)
   if (import.meta.client) {
     const saved = localStorage.getItem('my-saved-accounts')
     if (saved) {
@@ -35,26 +38,16 @@ export const useAccountStore = defineStore('accountStore', () => {
     }
   }
 
-  // Watch for changes and save to LocalStorage automatically
   watch(accounts, (newAccounts, oldAccounts) => {  
-    if (import.meta.client) {
-      localStorage.setItem('my-saved-accounts', JSON.stringify(newAccounts))
-    }
+    if (import.meta.client) localStorage.setItem('my-saved-accounts', JSON.stringify(newAccounts))
   }, { deep: true })
 
-  // Actions
-  const addAccount = (account: Omit<Account, 'id'>, id?: string, field?: string, value?: string | boolean) => {    
-    if (id && field && value) {      
+  const addAccount = (account: Omit<Account, 'id'>, id?: string) => {        
+    let editAccount = id
+    if (editAccount) {      
       accounts.value = accounts.value.map(acc => {
-        if (acc.id === id) {
-          let a = {
-            ...acc,
-            [field]: value,
-          } 
-          return {
-            ...acc,
-            [field]: value,
-          }
+        if (acc.id === id) {          
+          return {...acc, ...account}
         } 
         return acc
       })
@@ -65,12 +58,15 @@ export const useAccountStore = defineStore('accountStore', () => {
       })
     }    
 
-    if (account.collection && !collections.value.includes(account.collection)) collections.value.push(account.collection)
+    // Create New Collection
+    if (account.collection && !collections.value.includes(account.collection)) {      
+      createCollection({name: account.collection, selectedAccounts: []})
+    }
   }
 
-  const deleteItem = (del_: string[]) => {       
+  const deleteItem = (del_: string[]) => {           
     if (view.value === 'collections') {
-      console.log('sad', del_.length, collections.value);
+      collectionStore.deleteCollection()
     }      
 
     else if (view.value === 'bank') {
@@ -86,7 +82,7 @@ export const useAccountStore = defineStore('accountStore', () => {
       }
      }
 
-    popUp.value = !popUp.value
+    deleteModalSwitch.value = !deleteModalSwitch.value
   }
 
   // Getters
@@ -96,9 +92,10 @@ export const useAccountStore = defineStore('accountStore', () => {
   })
 
   const filteredAndCategorizedAccounts = computed(() => {    
-    let result = accounts.value
+    let result: Account[] = accounts.value
+    let collectionsResult = ''
 
-    // 1. Search filter
+    // 1. Search filter    
     if (searchQuery.value) {
       const q = searchQuery.value.toLowerCase()
       result = result.filter(acc => 
@@ -106,19 +103,19 @@ export const useAccountStore = defineStore('accountStore', () => {
         acc.nickname.toLowerCase().includes(q) ||
         acc.accountNumber.includes(q)
       )
+    }    
+
+    if (view.value === 'collections') {
+      result = result.filter(account => account.collection === currentCollection.value)
     }
     
     // 2. Bank filter
     if (selectedBank.value) {
-      if (selectedBank.value === 'all') result = accounts.value
-      else if (selectedBank.value === 'favourites') result = accounts.value.filter(account => !!account.favourite)
+      if (selectedBank.value === 'all') result
+      else if (selectedBank.value === 'favourites') result = result.filter(account => !!account.favourite)
       else result = result.filter(acc => acc.bank === selectedBank.value)
     }    
-
-    if (currentCollection.value) {       
-      result = result.filter(acc => acc.collection && acc.collection.toLowerCase() === currentCollection.value.toLowerCase())            
-    }
-
+    
     // 3. Categorize by Bank
     const grouped = result.reduce((acc, current) => {
       if (!acc[current.bank]) {
@@ -127,27 +124,36 @@ export const useAccountStore = defineStore('accountStore', () => {
       acc[current.bank].push(current)
       return acc
     }, {} as Record<string, Account[]>)
-
-    // Convert to an array of objects for easier looping in Vue
+    
+    // Convert to an array of objects
     return Object.keys(grouped).sort().map(bank => ({
       bankName: bank,
       accounts: grouped[bank]
     }))
   })
-
-  const numberOfAccountsFiltered = computed(() => {
-    return filteredAndCategorizedAccounts.value.filter((acc: Account & {bankName: string}) => acc.bankName.toLowerCase() === selectedBank.value.toLowerCase())[0]?.accounts.length
-  })
+  
+  const addFavourite = () => {        
+    accounts.value = accounts.value.map(account => {
+      if (selectedList.value.includes(account.id)) {
+        let isFavourite = !!account.favourite
+        return {
+          ...account,
+          favourite: !isFavourite
+        }
+      } 
+      else return account
+    })    
+  }
 
   return { 
-    popUp,
+    deleteModalSwitch,
     accounts, 
     searchQuery, 
     selectedBank, 
     uniqueBanks, 
     addNewAccount,
-    toggleAppModal,
-    numberOfAccountsFiltered,
+    addFavourite,
+    editModalSwitch,
     openAccountsDropdown,
     filteredAndCategorizedAccounts, 
     addAccount,

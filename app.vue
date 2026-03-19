@@ -14,21 +14,20 @@
     </div>
   </div>
   <ToolBar />
-  <AppModal>
+
+  <AppModal :toggle="editModalSwitch">
     <EditAccount :account="editingAccount"  />
   </AppModal>
 </template>
 
 <script setup lang="ts">
 const accountStore = useAccountStore()
-const {addNewAccount, toggleAppModal, accounts} = storeToRefs(accountStore)
+const {addNewAccount, accounts, editModalSwitch} = storeToRefs(accountStore)
 
 const selectStore = useSelectListStore()
 const {selectedList} = storeToRefs(selectStore)
 
 const editingAccount = computed(() => {
-  if (selectedList.value.length === 1) {
     return accounts.value.filter(account => account.id === selectedList.value[0])[0]
-  }
 })
 </script>

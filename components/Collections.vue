@@ -6,9 +6,6 @@ const {createCollection} = accountsCollection
 const accountStore = useAccountStore()
 const {accounts, openAccountsDropdown} = storeToRefs(accountStore)
 
-const call = () => openAccountsDropdown.value = false
-
-
 const form = reactive<collectionForm>({
     name: "",
     selectedAccounts: []

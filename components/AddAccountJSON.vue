@@ -85,7 +85,7 @@ const processJsonArray = (parsedData: any) => {
         favourite: item.favourite,
         phoneNumber: item.phoneNumber,
         selected: item.selected,
-        collection: item.collection
+        collection: item.collection,
       })
       addedCount++
     }

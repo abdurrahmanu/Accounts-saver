@@ -2,15 +2,15 @@
   <div :class="{
     'bg-slate-200 hover:bg-slate-200': selectedList.includes(account.id),
     'hover:bg-zinc-200': !selectedList.includes(account.id),
-    'border-l-green': account.favourite,
+    'border-l-green-500': account.favourite,
     'border-l-transparent': !account.favourite
   }"
   @touchstart.prevent="selectMode.start(account.id)" 
   @touchend="selectMode.stop(account.id)" 
   @mouseup="selectMode.stop(account.id)"
   @mousedown="selectMode.start(account.id)"
-  class="text-xs px-4 py-2 border-y border-gray-200 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-2">
-  
+  class="text-xs px-4 py-2 border-y border-y-gray-200 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
+  {{ account.collection }}
   <div class="flex justify-between w-full">
     <div class="flex gap-2 items-center">
       <div v-if="ongoingSelection">
@@ -41,9 +41,6 @@ const {selectedList, ongoingSelection} = storeToRefs(selectMode)
 
 const accountStore = useAccountStore()
 const {selectedBank} = storeToRefs(accountStore)
-
-const accountsCollection = useAccountsCollection()
-const {view} = storeToRefs(accountsCollection)
 
 const emit = defineEmits<{
   accountID: [id: string]

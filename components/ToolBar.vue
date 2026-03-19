@@ -3,11 +3,15 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
 const accountStore = useAccountStore()
-const { toggleAppModal, popUp, accounts } = storeToRefs(accountStore)
+const { editModalSwitch, deleteModalSwitch, accounts } = storeToRefs(accountStore)
+const {addFavourite} = accountStore
 
 const selectMode = useSelectListStore()
 const { selectedList, ongoingSelection } = storeToRefs(selectMode)
 const { selectAll, cancel } = selectMode
+
+const collectionStore = useAccountsCollection()
+const {view, collections} = storeToRefs(collectionStore)
 
 const svgs: Record<string, string> = {
   favourite: '/faved.svg',
@@ -20,7 +24,7 @@ const svgs: Record<string, string> = {
 
 const options = computed(() => {
   const count = selectedList.value.length
-  const total = accounts.value.length
+  const total = view.value === 'bank' ? accounts.value.length : collections.value.length
 
   return [
     { id: 'favourite', label: 'favourite' },
@@ -30,7 +34,7 @@ const options = computed(() => {
     },
     { 
       id: 'delete', 
-      label: count === total ? 'delete all' : `delete (${count})` 
+      label: count === total ? 'delete all' : count === 0 ? 'delete' : `delete (${count})` 
     },
     { id: 'select all', label: 'select all' },
     { id: 'cancel', label: 'cancel' },
@@ -41,22 +45,23 @@ const options = computed(() => {
 const useOption = (id: string) => {
   switch (id) {
     case 'select all':
-      selectAll()
+      selectAll(view.value)
       break
     case 'cancel':
       cancel()
       break
-    case 'delete':
-      popUp.value = !popUp.value
+    case 'delete':      
+      if (!selectedList.value.length) return
+      deleteModalSwitch.value = !deleteModalSwitch.value    
       break
     case 'edit':
-      toggleAppModal.value = !toggleAppModal.value
+      editModalSwitch.value = !editModalSwitch.value      
       break
     case 'details':
       // Handle details logic here
       break
     case 'favourite':
-      // Handle favourite logic here
+      addFavourite()
       break
   }
 }
@@ -64,19 +69,20 @@ const useOption = (id: string) => {
 
 <template>
   <transition name="slide-in">
-    <div v-if="ongoingSelection" class="fixed w-full bottom-0 left-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-50">
+    <div v-if="ongoingSelection" class="bg-white fixed w-full text-[10px] bottom-0 left-0">
       <ul class="flex">
         <li 
           v-for="option in options" 
           :key="option.id"
           @click="useOption(option.id)" 
-          class="flex-1 text-xs text-center hover:bg-slate-100 cursor-pointer p-2 py-5 border-t border-slate-200 space-y-2 transition-colors"
+          class="z-1 flex-1 text-center hover:bg-slate-200 cursor-pointer p-2 py-5 border-t border-slate-200 space-y-2 transition-colors"
         >
-          <img 
-            :src="svgs[option.id]" 
-            :alt="option.label" 
-            class="w-6 mx-auto opacity-80"
-          >
+            <div class="h-5">
+                <img 
+                :src="svgs[option.id]"  
+                class="w-5 mx-auto opacity-80"
+                >
+            </div>
           <p class="uppercase font-medium tracking-tighter">{{ option.label }}</p>
         </li>
       </ul>
