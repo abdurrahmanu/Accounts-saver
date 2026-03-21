@@ -10,12 +10,12 @@
 
     </div>
 
-    <div v-if="store.filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-10 bg-white">
+    <div v-if="filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-10 bg-white">
       <img src="/empty-box.svg" alt="" class="mx-auto w-40">
       No accounts found. add some accounts!
     </div>
 
-    <div v-for="category in store.filteredAndCategorizedAccounts" :key="category.bankName" class="bg-white">
+    <div v-for="category in filteredAndCategorizedAccounts" :key="category.bankName" class="bg-white">
       <AccountItem 
       v-for="account in category.accounts" 
       :key="account.id" 
@@ -30,13 +30,10 @@
 
 <script setup lang="ts">
 const accountStore = useAccountStore()
-const {selectedBank, accounts, filteredAndCategorizedAccounts} = storeToRefs(accountStore)
+const {selectedBank, accounts, filteredAndCategorizedAccounts, toggleDeleteAccountModal} = storeToRefs(accountStore)
 
 const collections = useCollectionStore()
 const {isCollection, currentCollection, view, showAccountsList} = storeToRefs(collections)
-
-const store = useAccountStore()
-const {toggleDeleteAccountModal} = storeToRefs(store)
 
 const numberOfAccountsInList = computed(() => {
   let allAccounts = []

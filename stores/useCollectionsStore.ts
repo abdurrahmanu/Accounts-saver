@@ -12,7 +12,8 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
   const listStore = useSelectListStore()
   const collections = ref<string[]>([])
   const view = ref<'collections' | 'bank'>('bank')
-  
+
+  const selectedCollection = ref('')
   const isCollection = ref(false)
   const currentCollection = ref('')
   const toggleCollectionForm = ref(false)
@@ -54,14 +55,13 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
   }
 
   const editCollection = (form: collectionForm) => {
-    
     accountStore.accounts = accountStore.accounts.map((acc: Account) => {
       // had collection name but no longer has
-      if (acc.collection === listStore.selectedList[0] && !form.selectedAccounts[acc.id as keyof object]) {
+      if (acc.collection === selectedCollection.value && !form.selectedAccounts[acc.id as keyof object]) {
         return {...acc, collection: ''}
       }
       // had collection but name is changed
-      else if (acc.collection === listStore.selectedList[0]) {
+      else if (acc.collection === selectedCollection.value) {
         return {...acc, collection: form.name}
       }
       // didn't have collection name but it has now
@@ -72,10 +72,11 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
       return acc
     })
 
-    let index = collections.value.indexOf(listStore.selectedList[0])
+    let index = collections.value.indexOf(selectedCollection.value)
     if (index !== -1) collections.value.splice(index, 1, form.name)
       
     toggleEditCollectionModal.value = !toggleEditCollectionModal
+    selectedCollection.value = ''
   }
 
   const deleteCollection = () => {
@@ -107,6 +108,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
     currentCollection,
     toggleCollectionForm,
     toggleEditCollectionModal,
+    selectedCollection,
     editCollection,
     collections,
     view,

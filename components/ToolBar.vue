@@ -50,9 +50,6 @@ const useOption = (id: string) => {
       if (!selectedList.value.length) return
       toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value    
       break
-    case 'details':
-      // Handle details logic here
-      break
     case 'favourite':
       toggleFav()
       break

@@ -97,7 +97,6 @@ const editAccount = () => {
         collection: form.collection,
         selected: false,
     }, props.account.id)
-    
 
     toggleEditAccountModal.value = false        
 }

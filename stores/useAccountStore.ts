@@ -46,6 +46,7 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   const addAccount = (account: Omit<Account, 'id'>, id?: string) => {        
     let editAccount = id
+
     if (editAccount) {      
       accounts.value = accounts.value.map(acc => {
         if (acc.id === id) {          
@@ -62,11 +63,11 @@ export const useAccountStore = defineStore('accountStore', () => {
 
     // Create New Collection
     if (account.collection && !collections.value.includes(account.collection)) {      
-      createCollection({name: account.collection, selectedAccounts: []})
+      createCollection({name: account.collection, selectedAccounts: {[id as keyof object]: true}})
     }
   }
 
-  const deleteItem = (del_: string[]) => {               
+  const deleteItem = (del_: string[]) => {                   
     if (view.value === 'collections') {
       collectionStore.deleteCollection()
     }      

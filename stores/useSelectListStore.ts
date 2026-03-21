@@ -39,15 +39,25 @@ export const useSelectListStore = defineStore('selectList', () => {
     if (activateTimer.value) clearTimeout(activateTimer.value)
   }
 
+
+
+  // select is the problem here.
   const selectAll = (view: 'collections' | 'bank') => {
+    console.log(accountStore.filteredAndCategorizedAccounts);
+    
+    let a = Object.assign({}, ...accountStore.filteredAndCategorizedAccounts.map(account => {
+      return {...account.accounts}
+    }))
+
     if (view === 'bank') { 
-      if (accountStore.accounts.length) {
-        for (let index = 0; index < accountStore.accounts.length; index++) {
-          const id = accountStore.accounts[index].id
+      let listLength = accountStore.filteredAndCategorizedAccounts.length
+      if (listLength) {
+        for (let index = 0; index < listLength; index++) {
+          // const id = accountStore.filteredAndCategorizedAccounts[index].id
           
-          if (!selectedList.value.includes(id)) {
-            selectedList.value.push(id)
-          }
+          // if (!selectedList.value.includes(id)) {
+          //   selectedList.value.push(id)
+          // }
         }
       }
     } else {      

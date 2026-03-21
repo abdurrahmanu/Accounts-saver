@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-const accountStore = useAccountStore()
-const {accounts} = storeToRefs(accountStore)
-
 const model = defineModel<boolean>()
 
 const props = defineProps<{
@@ -18,7 +15,10 @@ const props = defineProps<{
             type="checkbox" 
             v-model="model">
             <div class="text-sm p-3 flex-1">
-                <p class="block font-medium text-gray-700 whitespace-nowrap" for="">{{ account.name }}</p>
+                <p class="block font-medium text-gray-700 whitespace-nowrap" for="">
+                    {{ account.name }}
+                    <span v-if="account.collection && !toggle" class="uppercase">- ({{ account.collection }})</span>
+                </p>
                 <p>{{ account.accountNumber }}</p>
                 <p>{{ account.bank }}</p>
             </div>

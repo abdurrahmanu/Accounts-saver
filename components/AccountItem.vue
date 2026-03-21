@@ -37,9 +37,9 @@
                 </div>
               </div>
             </div>
-            <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)" class="min-w-40 ring rounded-md p-2 m-1 gap-4 ring-slate-200 bg-slate-200 ml-8">
-              <p v-if="account.phoneNumber" class="">PHONE NUMBER: {{ account.phoneNumber }}</p>
-              <p v-if="account.collection" class="">COLLECTION: {{ account.collection }}</p>
+            <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)" class="min-w-40 ring rounded-md p-2 m-1 gap-4 ring-slate-200 bg-slate-200">
+              <p v-if="account.phoneNumber" class=""><span class="font-bold">PHONE NUMBER:</span> {{ account.phoneNumber }}</p>
+              <p v-if="account.collection" class=""><span class="font-bold">COLLECTION:</span> {{ account.collection }}</p>
             </div>
         </div>
 
@@ -48,28 +48,28 @@
 
       <div class="bg-slate-100 selection:bg-none select-none border-y border-y-slate-200 flex items-center">
 
-        <div @click="copyToClipboard" class="h-full hover:bg-black/20 px-1 flex items-center">
+        <div @click="copyToClipboard" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
           <img v-if="!copied" class="w-7 p-1" src="/tocopy.svg" alt="">
           <img v-else class="w-7 p-1" src="/copied.svg" alt="">
         </div>
 
-        <div v-if="multiSelect" class="h-full flex items-center">
-          <div @click="toggleFav(account.id)" class="h-full hover:bg-green-600/20 px-1 flex items-center">
+        <div v-if="multiSelect" class="rounded-md flex items-center">
+          <div @click="toggleFav(account.id)" class="p-1 rounded-md hover:bg-green-300/30 px-1 flex items-center">
             <img v-if="account.favourite" src="/fav.svg" alt="" class="w-5">
             <img v-else src="/unfaved.svg" alt="" class="w-5">
           </div>
 
-          <div @click.self="delAccount(account.id)" class="h-full hover:bg-red-600/20 px-1 flex items-center">
+          <div @click="delAccount(account.id)" class="p-1 rounded-md hover:bg-red-600/20 px-1 flex items-center">
             <img src="/delete.svg" alt="" class="w-5">
           </div>
         </div>
         
-        <div @click="toggleSeeMore(account.id)" class="h-full hover:bg-black/20 px-1 flex items-center">
-          <img v-if="!seeMore" src="/view.svg" alt="" class="w-6">
+        <div @click="toggleSeeMore(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
+          <img v-if="seeMore === account.id" src="/view.svg" alt="" class="w-6">
           <img v-else src="/closed-eye.svg" alt="" class="w-5">
         </div>
 
-        <div @click.self="editAccount" v-if="singleSelect" class="h-full hover:bg-black/20 px-1 flex items-center">
+        <div @click="editAccount" v-if="singleSelect" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
           <img src="/edit.svg" alt="" class="w-5">
         </div>
       </div>
@@ -123,8 +123,7 @@ const multiSelect = computed(() => {
 })
 
 const editAccount = () => {
-  if (editCol.value) toggleEditCollectionModal.value = !toggleEditCollectionModal.value
-  else toggleEditAccountModal.value = !toggleEditAccountModal.value      
+  toggleEditAccountModal.value = !toggleEditAccountModal.value      
 }
 
 const delAccount = (id: string) => {  

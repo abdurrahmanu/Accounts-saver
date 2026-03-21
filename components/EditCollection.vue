@@ -1,10 +1,7 @@
 <script setup lang="ts">
 const collectionStore = useCollectionStore()
-const {toggleEditCollectionModal} = storeToRefs(collectionStore)
+const {toggleEditCollectionModal, selectedCollection} = storeToRefs(collectionStore)
 const {editCollection} = collectionStore
-
-const listStore = useSelectListStore()
-const {selectedList} = storeToRefs(listStore)
 
 const openAccountsDropdown = ref(false)
 
@@ -12,18 +9,18 @@ const accountStore = useAccountStore()
 const {accounts} = storeToRefs(accountStore)
 
 const form = reactive<collectionForm>({
-    name: selectedList.value[0],
+    name: selectedCollection.value,
     selectedAccounts: ref(
         Object.assign({}, ...accounts.value.map(account => {
-            return {[account.id.toString()]: false}
+            return {[account.id.toString()]: account.collection === selectedCollection.value ? true : false}
         }))
     )
 })
 
 const readOnlyForm = {
-    name: selectedList.value[0],
+    name: selectedCollection.value,
     selectedAccounts: Object.assign({}, ...accounts.value.map(account => {
-            return {[account.id.toString()]: false}
+            return {[account.id.toString()]: account.collection === selectedCollection.value ? true : false}
         }))
 }
 
@@ -38,7 +35,6 @@ const formIsChanged = computed(() => {
 
 <template>
     <div>
-        {{ formIsChanged }}
         <h3 class="block font-medium text-gray-700 pb-2">Edit Collection</h3>
 
         <div class="font-medium text-gray-700 text-xs flex items-center justify-between gap-3 ring ring-slate-400 rounded-md mb-2">
@@ -64,7 +60,7 @@ const formIsChanged = computed(() => {
             </div>
             <div class="space-x-2">
                 <button @click="toggleEditCollectionModal = false" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
-                <button v-if="formIsChanged" @click="editCollection(form, )" class="ring px-5 py-1 bg-green-300 hover:bg-green-300 ring-slate-300 rounded-md">SAVE</button>
+                <button v-if="formIsChanged" @click="editCollection(form)" class="ring px-5 py-1 bg-green-300 hover:bg-green-300 ring-slate-300 rounded-md">SAVE</button>
             </div>
         </div>
     </div>
