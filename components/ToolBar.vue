@@ -3,22 +3,20 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
 const accountStore = useAccountStore()
-const { editModalSwitch, deleteModalSwitch, accounts } = storeToRefs(accountStore)
-const {addFavourite} = accountStore
+const { toggleDeleteAccountModal, accounts } = storeToRefs(accountStore)
+const {toggleFav} = accountStore
 
 const selectMode = useSelectListStore()
 const { selectedList, ongoingSelection } = storeToRefs(selectMode)
 const { selectAll, cancel } = selectMode
 
-const collectionStore = useAccountsCollection()
+const collectionStore = useCollectionStore()
 const {view, collections} = storeToRefs(collectionStore)
 
 const svgs: Record<string, string> = {
   favourite: '/faved.svg',
-  edit: '/edit.svg',
-  details: '/details.svg',
   delete: '/delete.svg',
-  'select all': '/select.svg',
+  'select all': '/selectall.svg',
   cancel: '/cancel.svg',
 }
 
@@ -27,10 +25,8 @@ const options = computed(() => {
   const total = view.value === 'bank' ? accounts.value.length : collections.value.length
 
   return [
-    { id: 'favourite', label: 'favourite' },
-    { 
-      id: count === 1 ? 'edit' : 'details', 
-      label: count === 1 ? 'edit' : 'details' 
+    { id: 'favourite', 
+      label: count === 0 ? 'add fav' : `add fav(${count})` 
     },
     { 
       id: 'delete', 
@@ -52,16 +48,13 @@ const useOption = (id: string) => {
       break
     case 'delete':      
       if (!selectedList.value.length) return
-      deleteModalSwitch.value = !deleteModalSwitch.value    
-      break
-    case 'edit':
-      editModalSwitch.value = !editModalSwitch.value      
+      toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value    
       break
     case 'details':
       // Handle details logic here
       break
     case 'favourite':
-      addFavourite()
+      toggleFav()
       break
   }
 }
@@ -80,7 +73,7 @@ const useOption = (id: string) => {
             <div class="h-5">
                 <img 
                 :src="svgs[option.id]"  
-                class="w-5 mx-auto opacity-80"
+                class="w-5.5 mx-auto opacity-80"
                 >
             </div>
           <p class="uppercase font-medium tracking-tighter">{{ option.label }}</p>

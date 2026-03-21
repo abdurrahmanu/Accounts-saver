@@ -52,7 +52,7 @@
 const accountStore = useAccountStore()
 const {uniqueBanks, selectedBank, searchQuery, accounts} = storeToRefs(accountStore)
 
-const collectionStore = useAccountsCollection()
+const collectionStore = useCollectionStore()
 const {toggleCollectionForm, isCollection, view} = storeToRefs(collectionStore)
 
 const allCollectionTiles = computed(() => {

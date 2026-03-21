@@ -13,9 +13,7 @@
             <div class="relative">
               <label class="block text-sm font-medium text-gray-700">Bank Name</label>
               <input v-model="form.bank" type="text" @focus="showBanksList = !showBanksList" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Jaiz Bank">
-              <ul v-if="showBanksList" class="max-h-40 w-full absolute z-2 bg-white ring ring-slate-300 rounded-md px-1 overflow-y-scroll">
-                <li @click="form.bank = bank, showBanksList = !showBanksList" v-for="(bank, index) in filteredBanks || banksList" :key="index" class="hover:bg-slate-200 transition-all duration-100 p-1 z-3">{{bank}}</li>
-              </ul>
+              <BanksList :search-query="form.bank" :toggle="showBanksList" @addBank="form.bank = $event, showBanksList = false" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">Account Number</label>
@@ -58,6 +56,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 
+const showBanksList = ref(false)
 const successMessage = ref(false)
 const errorMessage = ref(false)
 
@@ -67,16 +66,6 @@ const {addAccount} = accountStore
 
 // --- Manual Form Logic ---
 const form = reactive({ name: '', nickname: '', bank: '', accountNumber: '' , phoneNumber: '', favourite: false, selected: false, collection: ''})
-
-const banksList = ref([
-  'Access Bank Plc', 'UBA United Bank for Africa', 'Zenith Bank Plc', 'GTBank Guarantee Trust Holding Company GTCO', 'First Bank', 'Opay', 'Palmpay', 'Kuda Bank', 'Fidelity Bank', 'Ecobank', 'FCMB First City Monument Bank', 'MoniePoint', 'Polaris Bank', 'Keystone Bank', 'Providus Bank', 'Titan Trust Bank', 'Unity Bank', 'Standard Chartered Bank', 'Globus Bank', 'Parallex Bank', 'Jaiz Bank', 'Premium Trust Bank', 'Sterling Bank', 'Stanbic IBTC', 'Lotus Bank', 'Signature Bank', 'Alternative Bank (AltBank)', 'SunTrust Bank'
-])
-
-const filteredBanks = computed(() => {
-  return banksList.value.filter(bank => bank.toLowerCase().includes(form.bank.toLowerCase()))
-})
-
-const showBanksList = ref(false)
 
 const submitForm = () => {
   const clearForm = () => {

@@ -6,6 +6,8 @@
         <h3 v-if="isCollection && view === 'collections'" class="uppercase font-bold">{{ currentCollection }}</h3>
       </div>
       <p v-if="accounts.length" class="uppercase font-mono pr-2">{{ selectedBank }} ({{ numberOfAccountsInList }})</p>
+
+
     </div>
 
     <div v-if="store.filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-10 bg-white">
@@ -21,7 +23,7 @@
     </div>
   </div>  
 
-  <AppModal :toggle="deleteModalSwitch">
+  <AppModal :toggle="toggleDeleteAccountModal">
     <PopUp/>
   </AppModal>
 </template>
@@ -30,11 +32,11 @@
 const accountStore = useAccountStore()
 const {selectedBank, accounts, filteredAndCategorizedAccounts} = storeToRefs(accountStore)
 
-const collections = useAccountsCollection()
+const collections = useCollectionStore()
 const {isCollection, currentCollection, view, showAccountsList} = storeToRefs(collections)
 
 const store = useAccountStore()
-const {deleteModalSwitch} = storeToRefs(store)
+const {toggleDeleteAccountModal} = storeToRefs(store)
 
 const numberOfAccountsInList = computed(() => {
   let allAccounts = []

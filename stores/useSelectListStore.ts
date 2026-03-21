@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useSelectListStore = defineStore('selectList', () => {
-  const collectionStore = useAccountsCollection()
+  const collectionStore = useCollectionStore()
   const accountStore = useAccountStore()
   const ongoingSelection = ref(false)
   const activateDelay = 700

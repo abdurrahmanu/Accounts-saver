@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const accountsCollection = useAccountsCollection()
+const accountsCollection = useCollectionStore()
 const {openCollection} = accountsCollection
 
 const selectMode = useSelectListStore()

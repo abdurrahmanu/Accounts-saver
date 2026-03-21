@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-const accountsCollection = useAccountsCollection()
+import AccountSelect from './AccountSelect.vue'
+
+const accountsCollection = useCollectionStore()
 const {collections, showAccountsList, toggleCollectionForm, view} = storeToRefs(accountsCollection)
 const {createCollection} = accountsCollection
 
@@ -8,7 +10,11 @@ const {accounts, openAccountsDropdown} = storeToRefs(accountStore)
 
 const form = reactive<collectionForm>({
     name: "",
-    selectedAccounts: []
+    selectedAccounts: ref(
+        Object.assign({}, ...accounts.value.map(account => {
+            return {[account.id.toString()]: false}
+        }))
+    )
 })
 
 const successMessage = ref(false)
@@ -20,7 +26,11 @@ const submitForm = () => {
         setTimeout(() => {  
             successMessage.value = true
             form.name = ""
-            form.selectedAccounts = []
+            form.selectedAccounts = ref(
+                Object.assign({}, ...accounts.value.map(account => {
+                    return {[account.id.toString()]: false}
+                }))
+            )
         }, 0);
     }
 
@@ -33,7 +43,13 @@ const submitForm = () => {
 <template>
     <div v-if="view === 'collections' && !showAccountsList" class="pt-4 border-t border-t-slate-300">
         <div class="flex items-center mt-3 justify-end px-3">
-            <button @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 flex items-center gap-2 rounded-md">{{ toggleCollectionForm ? 'Close Form' : 'Create New Collection' }} <img src="/add.svg" class="w-5"></button>
+            <button @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 flex items-center gap-2 rounded-md">
+                {{ toggleCollectionForm ? 'Close Form' : 'Create New Collection' }} 
+                <div>
+                    <img v-if="!toggleCollectionForm" src="/plus.svg" class="w-5">
+                    <img v-else src="/minus.svg" class="w-5">
+                </div>
+            </button>
         </div>
         
         <div v-if="collections.length === 0 && !toggleCollectionForm" class="text-center text-gray-500 py-8 bg-white">
@@ -61,20 +77,11 @@ const submitForm = () => {
                     <label class="block text-sm font-medium text-gray-700">Add/Remove Accounts</label>
                     <div class="max-h-80 bg-white rounded-md ring ring-slate-300 overflow-y-scroll">
                         <p @click="openAccountsDropdown = !openAccountsDropdown" class="text-center px-10 cursor-pointer py-2 bg-slate-200">Accounts List</p>
-                        <div v-if="openAccountsDropdown" v-for="(account, index) in accounts" :key="index">
-                            <label v-if="openAccountsDropdown" class="touch-friendly flex items-center justify-between pl-3 hover:bg-slate-200">
-                                    <input 
-                                    class="mt-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"  
-                                type="checkbox" 
-                                :value="account.id" 
-                                v-model="form.selectedAccounts">
-                                <div class="text-sm p-3 flex-1">
-                                    <p class="block font-medium text-gray-700 whitespace-nowrap" for="">{{ account.name }}</p>
-                                    <p>{{ account.accountNumber }}</p>
-                                    <p>{{ account.bank }}</p>
-                                </div>
-                            </label>
-                        </div>
+                        <AccountSelect 
+                        v-for="(account, index) in accounts" :key="index"
+                        :account="account" 
+                        :toggle="openAccountsDropdown" 
+                        v-model="form.selectedAccounts[account.id as keyof object]" />
                     </div>
                 </div>
                 <button type="submit" class="bg-green-300 hover:bg-green-400 rounded-md ring ring-slate-200 px-3 py-2 w-full">Create Collection</button>

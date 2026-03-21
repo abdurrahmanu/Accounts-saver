@@ -4,10 +4,10 @@ import { type Account } from '#imports'
 
 export interface collectionForm {
   name: string,
-  selectedAccounts: string[]
+  selectedAccounts: object
 }
 
-export const useAccountsCollection = defineStore('accountsCollection', () => {
+export const useCollectionStore = defineStore('accountsCollection', () => {
   const accountStore = useAccountStore()
   const listStore = useSelectListStore()
   const collections = ref<string[]>([])
@@ -16,6 +16,7 @@ export const useAccountsCollection = defineStore('accountsCollection', () => {
   const isCollection = ref(false)
   const currentCollection = ref('')
   const toggleCollectionForm = ref(false)
+  const toggleEditCollectionModal = ref(false)
 
   if (import.meta.client) {
     const saved = localStorage.getItem('my-saved-collections')
@@ -36,19 +37,45 @@ export const useAccountsCollection = defineStore('accountsCollection', () => {
     }
   }, { deep: true })
 
-  const createCollection = (form: collectionForm) => {            
-    if (collections.value.includes(form.name.toLowerCase()) && !form.selectedAccounts.length) return // group already exists and no new account added
+  const createCollection = (form: collectionForm) => {      
+    let selectedAccs = Object.keys(form.selectedAccounts).length      
+    if (collections.value.includes(form.name.toLowerCase()) && !selectedAccs) return // group already exists and no new account added
 
     if (!collections.value.includes(form.name.toLowerCase())) collections.value.push(form.name.toLowerCase())
 
-    if (form.selectedAccounts) {
+    if (selectedAccs) {
       accountStore.accounts = accountStore.accounts.map((acc: Account) => {
-        if (form.selectedAccounts.includes(acc.id)) {
+        if (form.selectedAccounts[acc.id as keyof object]) {
           acc.collection = form.name.toLowerCase()
         }
         return {...acc, collection: acc.collection}
       })
     }
+  }
+
+  const editCollection = (form: collectionForm) => {
+    
+    accountStore.accounts = accountStore.accounts.map((acc: Account) => {
+      // had collection name but no longer has
+      if (acc.collection === listStore.selectedList[0] && !form.selectedAccounts[acc.id as keyof object]) {
+        return {...acc, collection: ''}
+      }
+      // had collection but name is changed
+      else if (acc.collection === listStore.selectedList[0]) {
+        return {...acc, collection: form.name}
+      }
+      // didn't have collection name but it has now
+      else if (form.selectedAccounts[acc.id as keyof object]) {
+        return {...acc, collection: form.name}
+      }
+      
+      return acc
+    })
+
+    let index = collections.value.indexOf(listStore.selectedList[0])
+    if (index !== -1) collections.value.splice(index, 1, form.name)
+      
+    toggleEditCollectionModal.value = !toggleEditCollectionModal
   }
 
   const deleteCollection = () => {
@@ -79,6 +106,8 @@ export const useAccountsCollection = defineStore('accountsCollection', () => {
     showAccountsList,
     currentCollection,
     toggleCollectionForm,
+    toggleEditCollectionModal,
+    editCollection,
     collections,
     view,
     createCollection,

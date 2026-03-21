@@ -13,7 +13,7 @@ export interface Account {
 }
 
 export const useAccountStore = defineStore('accountStore', () => {
-  const collectionStore = useAccountsCollection()
+  const collectionStore = useCollectionStore()
   const {collections} = storeToRefs(collectionStore)
   const {createCollection} = collectionStore
 
@@ -23,12 +23,14 @@ export const useAccountStore = defineStore('accountStore', () => {
   const currentCollection = computed(() => collectionStore.currentCollection)
   const view = computed(() => collectionStore.view)
   
-  const editModalSwitch = ref(false)
+  const singleDelete = ref('')
+  const seeMore = ref('')
+  const toggleEditAccountModal = ref(false)
   const addNewAccount = ref(false)
   const accounts = ref<Account[]>([])
   const searchQuery = ref('')
   const selectedBank = ref('all')
-  const deleteModalSwitch = ref(false)
+  const toggleDeleteAccountModal = ref(false)
   const openAccountsDropdown = ref(false)
 
   if (import.meta.client) {
@@ -64,7 +66,7 @@ export const useAccountStore = defineStore('accountStore', () => {
     }
   }
 
-  const deleteItem = (del_: string[]) => {           
+  const deleteItem = (del_: string[]) => {               
     if (view.value === 'collections') {
       collectionStore.deleteCollection()
     }      
@@ -82,7 +84,8 @@ export const useAccountStore = defineStore('accountStore', () => {
       }
      }
 
-    deleteModalSwitch.value = !deleteModalSwitch.value
+    toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value
+    singleDelete.value = ''
   }
 
   // Getters
@@ -93,7 +96,6 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   const filteredAndCategorizedAccounts = computed(() => {    
     let result: Account[] = accounts.value
-    let collectionsResult = ''
 
     // 1. Search filter    
     if (searchQuery.value) {
@@ -132,28 +134,43 @@ export const useAccountStore = defineStore('accountStore', () => {
     }))
   })
   
-  const addFavourite = () => {        
-    accounts.value = accounts.value.map(account => {
-      if (selectedList.value.includes(account.id)) {
-        let isFavourite = !!account.favourite
-        return {
-          ...account,
-          favourite: !isFavourite
-        }
-      } 
-      else return account
-    })    
+  const toggleFav = (id?: string) => {        
+    if (selectedList.value.length > 1) {
+      accounts.value = accounts.value.map(account => {
+        if (id === account.id) {
+          let isFavourite = !!account.favourite
+          return {
+            ...account,
+            favourite: !isFavourite
+          }
+        } 
+        return account
+      })    
+    } else {
+      accounts.value = accounts.value.map(account => {
+        if (selectedList.value.includes(account.id)) {
+          let isFavourite = !!account.favourite
+          return {
+            ...account,
+            favourite: !isFavourite
+          }
+        } 
+        return account
+      })    
+    }
   }
 
   return { 
-    deleteModalSwitch,
+    toggleDeleteAccountModal,
     accounts, 
     searchQuery, 
     selectedBank, 
     uniqueBanks, 
+    seeMore,
+    singleDelete,
     addNewAccount,
-    addFavourite,
-    editModalSwitch,
+    toggleFav,
+    toggleEditAccountModal,
     openAccountsDropdown,
     filteredAndCategorizedAccounts, 
     addAccount,

@@ -15,14 +15,21 @@
   </div>
   <ToolBar />
 
-  <AppModal :toggle="editModalSwitch">
+  <AppModal :toggle="toggleEditAccountModal">
     <EditAccount :account="editingAccount"  />
+  </AppModal>
+
+  <AppModal :toggle="toggleEditCollectionModal">
+    <EditCollection />
   </AppModal>
 </template>
 
 <script setup lang="ts">
 const accountStore = useAccountStore()
-const {addNewAccount, accounts, editModalSwitch} = storeToRefs(accountStore)
+const {addNewAccount, accounts, toggleEditAccountModal} = storeToRefs(accountStore)
+
+const collectionStore = useCollectionStore()
+const {toggleEditCollectionModal} = storeToRefs(collectionStore)
 
 const selectStore = useSelectListStore()
 const {selectedList} = storeToRefs(selectStore)
