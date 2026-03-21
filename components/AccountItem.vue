@@ -18,7 +18,7 @@
             <div class="flex">
               <div class="flex gap-2 items-center">
                 <div v-if="ongoingSelection">
-                  <img v-if="selectedList.includes(account.id)" src="/checkedbox.svg" class="w-5" alt="">
+                  <img v-if="selectedList.includes(account.id)" src="/uncheck.svg" class="w-5" />
                   <img v-else src="/uncheckedbox.svg" class="w-5" alt="">
                 </div>
                 <div v-if="seeMore === account.id">

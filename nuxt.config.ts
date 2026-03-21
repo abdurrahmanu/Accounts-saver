@@ -1,18 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
 
-
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
     '@pinia/nuxt',
-    '@vite-pwa/nuxt'
+    '@vite-pwa/nuxt',
+    'nuxt-svgo'
   ],
+  svgo: {
+    autoImportPath: "./assets/icons"
+  },
   pwa: {
     manifest: {
       name: 'accounts-manager',
       short_name: 'AManager',
+      display: 'standalone',
       icons: [
         {
           src: 'icons/icons1.svg',

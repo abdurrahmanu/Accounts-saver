@@ -1,13 +1,14 @@
 <template>
   <div class="pb-24 text-gray-900 font-sans mt-23 selection:bg-none selet-none">
     <AppHeader />
-      <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-x-4">
-        <div v-if="addNewAccount">
-          <AddAccountForm />
-          <AddAccountJSON />
-        </div>
-        <div v-else>
-          <SearchAndFilters />
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-x-4">
+      <div v-if="addNewAccount">
+        <AddAccountForm />
+        <AddAccountJSON />
+      </div>
+      <div v-else>
+        <SearchAndFilters />
+        <!-- <InstallApp /> -->
           <Collections />
           <AccountList />
         </div>
