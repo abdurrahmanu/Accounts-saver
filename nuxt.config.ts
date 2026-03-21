@@ -6,8 +6,29 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@vite-pwa/nuxt'
   ],
+  pwa: {
+    manifest: {
+      name: 'accounts-manager',
+      short_name: 'AManager',
+      icons: [
+        {
+          src: 'icons/icons1.svg',
+          sizes: 'any',
+          type: 'image/svg+xml',
+          purpose: 'any'
+        },
+        {
+          src: 'icons/icons1.svg',
+          sizes: 'any',
+          type: 'image/svg+xml',
+          purpose: 'maskable'
+        },
+      ]
+    }
+  },
   css: ['~/assets/css/main.css'],
   vite: {
     plugins: [tailwindcss()],
