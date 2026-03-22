@@ -6,21 +6,21 @@
         'border-l-green-500': account.favourite,
         'border-l-transparent': !account.favourite
       }"
-    @touchstart.prevent="selectMode.start(account.id)" 
-    @touchend="selectMode.stop(account.id)" 
-    @mouseup="selectMode.stop(account.id)"
-    @mousedown="selectMode.start(account.id)"
-    class="text-xs px-4 py-2 border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
+    @touchstart.prevent="selectMode.start($event, account.id)" 
+    @touchend="selectMode.stop($event, account.id)" 
+    @mouseup="selectMode.stop($event, account.id)"
+    @mousedown="selectMode.start($event, account.id)"
+    class="text-xs px-4 pl-2k py-2 border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
         <div class="flex justify-between w-full">
           <div>
             <div class="flex">
               <div class="flex gap-2 items-center">
                 <div v-if="ongoingSelection">
-                  <img v-if="selectedList.includes(account.id)" src="/uncheck.svg" class="w-5" />
-                  <img v-else src="/uncheckedbox.svg" class="w-5" alt="">
+                  <SvgUnchecked v-if="selectedList.includes(account.id)" class="w-5" />
+                  <SvgChecked v-else class="w-5" alt=""/>
                 </div>
                 <div v-if="seeMore === account.id">
-                  <img src="/user.svg" alt="" class="w-16">
+                  <SvgUser class="w-16" />
                 </div>
                 <div>
                   <div class="flex gap-2 items-start">
@@ -40,35 +40,33 @@
               <p v-if="account.collection" class=""><span class="font-bold">COLLECTION:</span> {{ account.collection }}</p>
             </div>
         </div>
-
         </div> 
       </div>
 
       <div class="bg-slate-100 selection:bg-none select-none border-y border-y-slate-200 flex items-center">
-
         <div @click="copyToClipboard" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
-          <img v-if="!copied" class="w-7 p-1" src="/tocopy.svg" alt="">
-          <img v-else class="w-7 p-1" src="/copied.svg" alt="">
+          <SvgCopy v-if="!copied" class="w-7 p-1" src="/tocopy.svg" />
+          <SvgCopied v-else class="w-7 p-1" src="/copied.svg" />
         </div>
 
         <div v-if="multiSelect" class="rounded-md flex items-center">
           <div @click="toggleFav(account.id)" class="p-1 rounded-md hover:bg-green-300/30 px-1 flex items-center">
-            <img v-if="account.favourite" src="/fav.svg" alt="" class="w-5">
-            <img v-else src="/unfaved.svg" alt="" class="w-5">
+            <SvgFav v-if="account.favourite" class="w-5"/>
+            <SvgUnfav v-else class="w-5"/>
           </div>
 
           <div @click="delAccount(account.id)" class="p-1 rounded-md hover:bg-red-600/20 px-1 flex items-center">
-            <img src="/delete.svg" alt="" class="w-5">
+            <SvgDelete class="w-5"/>
           </div>
         </div>
         
         <div @click="toggleSeeMore(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1.5 flex items-center">
-          <img v-if="seeMore === account.id" src="/view.svg" alt="" class="w-6">
-          <img v-else src="/closed-eye.svg" alt="" class="w-5">
+          <SvgView v-if="seeMore === account.id" class="w-6"/>
+          <SvgUnview v-else class="w-5"/>
         </div>
 
         <div @click="editAccount" v-if="singleSelect" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
-          <img src="/edit.svg" alt="" class="w-5">
+          <SvgEdit class="w-5"/>
         </div>
     </div>
   </div>
@@ -78,16 +76,9 @@
 const selectMode = useSelectListStore()
 const {selectedList, ongoingSelection} = storeToRefs(selectMode)
 
-const collectionStore = useCollectionStore()
-const {toggleEditCollectionModal, isCollection, showAccountsList} = storeToRefs(collectionStore)
-
 const accountStore = useAccountStore()
 const {selectedBank, toggleEditAccountModal, seeMore, toggleDeleteAccountModal, singleDelete} = storeToRefs(accountStore)
 const {toggleFav} = accountStore
-
-const editCol = computed(() => {
-  return !isCollection.value && !showAccountsList.value
-})
 
 const emit = defineEmits<{
   accountID: [id: string]

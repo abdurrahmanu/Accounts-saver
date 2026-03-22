@@ -26,7 +26,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
     }
   }
 
-  const openCollection = (collection: string) => {
+  const openCollection = (collection: string) => {    
     currentCollection.value = collection
     isCollection.value = true
   }

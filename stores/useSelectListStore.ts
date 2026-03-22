@@ -14,18 +14,20 @@ export const useSelectListStore = defineStore('selectList', () => {
     return accountStore.accounts.filter((account: Account) => selectedList.value.includes(account.id))
   })
 
-  const start = (id: string) => {              
+  const start = (event: Event, id: string) => {  
+    if (event.type === 'touchstart') event.preventDefault()
+              
     // remove item from the list      
     let alreadySelectedItem = selectedList.value.indexOf(id)
-    if (alreadySelectedItem !== -1) {        
+    if (alreadySelectedItem !== -1) {                    
       selectedList.value.splice(alreadySelectedItem, 1)          
-      // if (!selectedList.value.length) ongoingSelection.value = false
       return
-    } else {
+    } else {      
+      
       if (ongoingSelection.value) {
-        selectedList.value.push(id)
+        selectedList.value.push(id)        
       }
-      else {
+      else {        
         activateTimer.value = setTimeout(() => {
           selectedList.value.push(id)          
           ongoingSelection.value = true
@@ -34,13 +36,12 @@ export const useSelectListStore = defineStore('selectList', () => {
     }      
   }
 
-  const stop = (id: string) => {
+  const stop = (event: Event, id: string) => {
     if (selectedList.value.length) return
     if (activateTimer.value) clearTimeout(activateTimer.value)
   }
 
   const selectAll = (view: 'collections' | 'bank') => {
-    
     if (view === 'bank') { 
       accountStore.filteredAndCategorizedAccounts.map((acc: {bankName: string, accounts: Account[]}) => acc.accounts).flat().forEach(acc => {
         if (!selectedList.value.includes(acc.id)) {

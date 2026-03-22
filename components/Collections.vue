@@ -8,6 +8,9 @@ const {createCollection} = accountsCollection
 const accountStore = useAccountStore()
 const {accounts, openAccountsDropdown} = storeToRefs(accountStore)
 
+const listStore = useSelectListStore()
+const {selectedList} = storeToRefs(listStore)
+
 const form = reactive<collectionForm>({
     name: "",
     selectedAccounts: ref(
@@ -46,8 +49,8 @@ const submitForm = () => {
             <button @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 flex items-center gap-2 rounded-md">
                 {{ toggleCollectionForm ? 'Close Form' : 'Create New Collection' }} 
                 <div>
-                    <img v-if="!toggleCollectionForm" src="/plus.svg" class="w-5">
-                    <img v-else src="/minus.svg" class="w-5">
+                    <SvgPlus v-if="!toggleCollectionForm" class="w-5"/>
+                    <SvgMinus v-else class="w-5"/>
                 </div>
             </button>
         </div>
@@ -57,13 +60,14 @@ const submitForm = () => {
             No collections found. add some accounts!
         </div>
         
-        <div class="flex flex-wrap h-full flex-1 gap-5 p-5">
-            <SingleCollection 
-            v-for="(collection, index) in collections" 
-            :key="index"
-            v-if="!toggleCollectionForm" 
-            :collection="collection" />
-            
+        <div>
+            <div v-if="!toggleCollectionForm" class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),100px))] gap-4 p-3">
+                <SingleCollection 
+                v-for="(collection, index) in collections" 
+                :key="index"
+                :collection="collection" />
+            </div>
+                
             <form v-else @submit.prevent="submitForm" class="space-y-3 max-w-120 w-[80%] mx-auto">
                 <div>
                     <h3 v-if="toggleCollectionForm" class="font-bold">New Collection</h3>
@@ -72,7 +76,7 @@ const submitForm = () => {
                     <label class="block font-medium text-gray-700">Collection Name</label>
                     <input v-model="form.name" type="text" required class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Aliyu Balarabe">
                 </div>
-
+                
                 <div v-if="accounts.length" class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Add/Remove Accounts</label>
                     <div class="max-h-80 bg-white rounded-md ring ring-slate-300 overflow-y-scroll">
