@@ -13,7 +13,7 @@
       
       <div class="flex items-center w-full gap-2">
         <div class="relative md:w-64 h-20 ring ring-slate-300 p-2 overflow-y-scroll rounded-md bg-white w-[75%]">
-          <div v-if="allCollectionTiles" class="absolute z-2 top-0 left-0 right-0 bottom-0 bg-black/40"></div>
+          <!-- <div v-if="allCollectionTiles" class="absolute z-2 top-0 left-0 right-0 bottom-0 bg-black/40"></div> -->
           <ul v-if="accounts.length" class="flex py-5 pt-0 gap-2 flex-wrap">
             <li 
             @click="selectedBank = 'favourites'"

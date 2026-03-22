@@ -10,14 +10,16 @@
           </div>
           
           <div class="grid grid-cols-2 gap-4">
-            <div class="relative">
-              <label class="block text-sm font-medium text-gray-700">Bank Name</label>
-              <input v-model="form.bank" type="text" @focus="showBanksList = !showBanksList" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Jaiz Bank">
-              <BanksList :search-query="form.bank" :toggle="showBanksList" @addBank="form.bank = $event, showBanksList = false" />
+            <div tabindex="-1" ref="focusContainer" @focusout="handleFocusOut" class="relative">
+              <label tabindex="0" class="block text-sm font-medium text-gray-700">Bank Name</label>
+              <input tabindex="0" v-model="form.bank" type="text" @focus="showBanksList = true" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="Jaiz Bank">
+              <div tabindex="0">
+                <BanksList :search-query="form.bank" :toggle="showBanksList" @addBank="form.bank = $event, showBanksList = false" />
+              </div>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700">Account Number</label>
-              <input v-model="form.accountNumber" type="text" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="0123456789">
+              <input v-model="form.accountNumber" :max="11" type="number" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="0123456789">
             </div>
           </div>
 
@@ -28,7 +30,7 @@
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Phone Number (optional)</label>
-            <input v-model="form.phoneNumber" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="09123456700">
+            <input v-model="form.phoneNumber" maxlength="11" type="tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border" placeholder="09123456700">
           </div>
 
           <div>
@@ -63,6 +65,14 @@ const errorMessage = ref(false)
 const accountStore = useAccountStore()
 const {addNewAccount, accounts} = storeToRefs(accountStore)
 const {addAccount} = accountStore
+
+const focusContainer = ref<HTMLElement | null>(null)
+
+const handleFocusOut = (event: Event) => {
+  if (!focusContainer.value?.contains(event.relatedTarget as Node)) {
+    showBanksList.value = false
+  }
+}
 
 // --- Manual Form Logic ---
 const form = reactive({ name: '', nickname: '', bank: '', accountNumber: '' , phoneNumber: '', favourite: false, selected: false, collection: ''})

@@ -1,5 +1,4 @@
 <template>
-  <div>
     <div class="flex justify-between">
       <div :class="{
         'bg-slate-200 hover:bg-slate-200': selectedList.includes(account.id),
@@ -13,7 +12,6 @@
     @mousedown="selectMode.start(account.id)"
     class="text-xs px-4 py-2 border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
         <div class="flex justify-between w-full">
-
           <div>
             <div class="flex">
               <div class="flex gap-2 items-center">
@@ -64,7 +62,7 @@
           </div>
         </div>
         
-        <div @click="toggleSeeMore(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
+        <div @click="toggleSeeMore(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1.5 flex items-center">
           <img v-if="seeMore === account.id" src="/view.svg" alt="" class="w-6">
           <img v-else src="/closed-eye.svg" alt="" class="w-5">
         </div>
@@ -72,7 +70,6 @@
         <div @click="editAccount" v-if="singleSelect" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
           <img src="/edit.svg" alt="" class="w-5">
         </div>
-      </div>
     </div>
   </div>
 </template>
