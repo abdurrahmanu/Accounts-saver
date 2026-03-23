@@ -9,13 +9,25 @@
         </div>
       </div>
     </div>
-    <button @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-zinc-200 w-fit px-2 h-fit py-1">
-      {{ addNewAccount ? 'Close Form' : 'Add Account' }}
-      <div>
-        <SvgPlus v-if="!addNewAccount" class="w-4"/>
-        <SvgMinus v-else class="w-4"/>
+    <div>
+      <button v-if="view === 'bank'" @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
+        {{ addNewAccount ? 'Close Form' : 'Add Account' }}
+        <div>
+          <SvgPlus v-if="!addNewAccount" class="w-4"/>
+          <SvgMinus v-else class="w-4"/>
+        </div>
+      </button>
+
+      <div v-if="view === 'collections'" class="flex items-center justify-end px-3">
+        <button @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 flex items-center gap-2 rounded-md">
+            {{ toggleCollectionForm ? 'Close Form' : 'Add Collection' }} 
+            <div>
+                <SvgPlus v-if="!toggleCollectionForm" class="w-4"/>
+                <SvgMinus v-else class="w-4"/>
+            </div>
+        </button>
       </div>
-    </button>
+    </div>
   </header>
 </template>
 
@@ -24,7 +36,7 @@ const accountStore = useAccountStore()
 const {addNewAccount} = storeToRefs(accountStore)
 
 const collectionStore = useCollectionStore()
-const {toggleCollectionForm} = storeToRefs(collectionStore)
+const {toggleCollectionForm, view} = storeToRefs(collectionStore)
 
 const toggleAddAccountForm = () => {
   addNewAccount.value = !addNewAccount.value

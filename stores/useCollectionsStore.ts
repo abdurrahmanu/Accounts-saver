@@ -11,7 +11,8 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
   const accountStore = useAccountStore()
   const listStore = useSelectListStore()
   const collections = ref<string[]>([])
-  const view = ref<'collections' | 'bank'>('bank')
+  const filteredCollections = ref<string[]>([])
+  const view = ref<'collections' | 'bank'>('collections')
 
   const selectedCollection = ref('')
   const isCollection = ref(false)
@@ -23,6 +24,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
     const saved = localStorage.getItem('my-saved-collections')
     if (saved) {
       collections.value = JSON.parse(saved)
+      filteredCollections.value = collections.value
     }
   }
 
@@ -108,6 +110,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
     currentCollection,
     toggleCollectionForm,
     toggleEditCollectionModal,
+    filteredCollections,
     selectedCollection,
     editCollection,
     collections,

@@ -14,7 +14,7 @@ export interface Account {
 
 export const useAccountStore = defineStore('accountStore', () => {
   const collectionStore = useCollectionStore()
-  const {collections} = storeToRefs(collectionStore)
+  const {collections, filteredCollections} = storeToRefs(collectionStore)
   const {createCollection} = collectionStore
 
   const selectStore = useSelectListStore()
@@ -95,7 +95,7 @@ export const useAccountStore = defineStore('accountStore', () => {
     return [...new Set(banks)].sort()
   })
 
-  const filteredAndCategorizedAccounts = computed(() => {    
+  const filteredAndCategorizedAccounts = computed(() => {        
     let result: Account[] = accounts.value
 
     // 1. Search filter    
@@ -127,12 +127,29 @@ export const useAccountStore = defineStore('accountStore', () => {
       acc[current.bank].push(current)
       return acc
     }, {} as Record<string, Account[]>)
-    
-    // Convert to an array of objects
-    return Object.keys(grouped).sort().map(bank => ({
+
+    const returnArr = Object.keys(grouped).sort().map(bank => ({
       bankName: bank,
       accounts: grouped[bank]
     }))
+
+    if (view.value === 'collections') {
+      let store: string[] = []
+      
+      if (selectedBank.value === 'all') {
+        store = collections.value
+      } else if (selectedBank.value === 'favourites') {
+        store = accounts.value.filter(acc => acc.collection.length && acc.favourite === true).map(acc => acc.collection)
+      } else {
+        store = accounts.value.filter(acc => acc.collection && acc.bank === selectedBank.value).map(acc => acc.collection)
+      }
+
+      store = [...new Set(store)]
+      filteredCollections.value = store
+    }
+    
+    // Convert to an array of objects
+    return returnArr
   })
   
   const toggleFav = (id?: string) => {        

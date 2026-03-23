@@ -16,8 +16,8 @@
             <div class="flex">
               <div class="flex gap-2 items-center">
                 <div v-if="ongoingSelection">
-                  <SvgUnchecked v-if="selectedList.includes(account.id)" class="w-5" />
-                  <SvgChecked v-else class="w-5" alt=""/>
+                  <SvgChecked v-if="selectedList.includes(account.id)" class="w-5" />
+                  <SvgUnchecked v-else class="w-5" alt=""/>
                 </div>
                 <div v-if="seeMore === account.id">
                   <SvgUser class="w-16" />

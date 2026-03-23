@@ -1,6 +1,5 @@
 <template>
   <div class="bg-slate-200 p-2 py-3 gap-2 max-w-150 mx-auto items-center relative">
-    <div v-if="toggleCollectionForm" class="absolute z-2 top-0 left-0 right-0 bottom-0 bg-black/40"></div>
     <div class="space-y-3">
       <div class="flex-1 relative flex items-center">
         <img src="/search.svg" class="absolute w-5 right-2" alt="">
@@ -12,13 +11,12 @@
       </div>
       
       <div class="flex items-center w-full gap-2">
-        <div class="relative md:w-64 h-20 ring ring-slate-300 p-2 overflow-y-scroll rounded-md bg-white w-[75%]">
-          <!-- <div v-if="allCollectionTiles" class="absolute z-2 top-0 left-0 right-0 bottom-0 bg-black/40"></div> -->
+        <div v-if="accounts.length" class="relative md:w-64 h-20 ring ring-slate-300 p-2 overflow-y-scroll rounded-md bg-white w-[75%]">
           <ul v-if="accounts.length" class="flex py-5 pt-0 gap-2 flex-wrap">
             <li 
             @click="selectedBank = 'favourites'"
             :class="{
-              'ring-green-400 text-green-700': selectedBank === 'favourites',
+              'ring-green-400 text-green-700 bg-green-200': selectedBank === 'favourites',
               'ring-slate-300': selectedBank !== 'favourites'
             }" 
           class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
@@ -26,7 +24,7 @@
           <li 
           @click="selectedBank = 'all'"
           :class="{
-            'ring-green-400 text-green-700': selectedBank === 'all',
+            'ring-green-400 text-green-700 bg-green-200': selectedBank === 'all',
             'ring-slate-300': selectedBank !== 'all'
           }" 
           class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
@@ -34,7 +32,7 @@
           <li 
           @click="selectedBank = bank"
           :class="{
-            'ring-green-400 text-green-700': selectedBank === bank,
+            'ring-green-400 text-green-700 bg-green-200': selectedBank === bank,
             'ring-slate-400': selectedBank !== bank
           }" 
           class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
@@ -42,20 +40,16 @@
           :key="index">{{ bank }}</li>
         </ul>
       </div>
+      <p v-else class="text-xs text-red-300">No filters available</p>
       <ViewType />
     </div>
-    </div>
   </div>
+</div>
+
+<p>{{ filteredAndCategorizedAccounts.length ? '' : '' }}</p>
 </template>
 
 <script setup lang="ts">
 const accountStore = useAccountStore()
-const {uniqueBanks, selectedBank, searchQuery, accounts} = storeToRefs(accountStore)
-
-const collectionStore = useCollectionStore()
-const {toggleCollectionForm, isCollection, view} = storeToRefs(collectionStore)
-
-const allCollectionTiles = computed(() => {
-  return view.value === 'collections' && !isCollection.value
-})
+const {uniqueBanks, selectedBank, searchQuery, accounts, filteredAndCategorizedAccounts} = storeToRefs(accountStore)
 </script>

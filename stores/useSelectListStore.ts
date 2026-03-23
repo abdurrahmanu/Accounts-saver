@@ -27,7 +27,7 @@ export const useSelectListStore = defineStore('selectList', () => {
       if (ongoingSelection.value) {
         selectedList.value.push(id)        
       }
-      else {        
+      else {    
         activateTimer.value = setTimeout(() => {
           selectedList.value.push(id)          
           ongoingSelection.value = true
@@ -38,7 +38,12 @@ export const useSelectListStore = defineStore('selectList', () => {
 
   const stop = (event: Event, id: string) => {
     if (selectedList.value.length) return
-    if (activateTimer.value) clearTimeout(activateTimer.value)
+    if (activateTimer.value) {
+      if(collectionStore.view === 'collections' && !ongoingSelection.value) {
+        collectionStore.openCollection(id)          
+      }
+      clearTimeout(activateTimer.value)
+    }
   }
 
   const selectAll = (view: 'collections' | 'bank') => {
