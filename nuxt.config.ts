@@ -9,36 +9,41 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     'nuxt-svgo'
   ],
-  
+
   svgo: {
     autoImportPath: "./assets/icons"
   },
-  pwa: {
+pwa: {
     devOptions: {
       enabled: true,
-      type: 'classic'
+      type: 'module'
     },
     manifest: {
       name: 'accounts-manager',
       short_name: 'AManager',
+      description: 'Offline account manager',
       display: 'standalone',
+      start_url: '/', // Required by Chrome
+      theme_color: '#ffffff', // Required by Chrome
+      background_color: '#ffffff', // Highly recommended
       icons: [
         {
-          src: 'icons/icons1.svg',
-          sizes: 'any',
-          type: 'image/svg+xml',
+          src: 'pwa-192x192.png', 
+          sizes: '192x192',
+          type: 'image/png',
           purpose: 'any'
         },
         {
-          src: 'icons/icons1.svg',
-          sizes: 'any',
-          type: 'image/svg+xml',
-          purpose: 'maskable'
-        },
+          src: 'pwa-512x512.png', 
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any maskable'
+        }
       ]
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      navigateFallback: '/' 
     },
   },
   css: ['~/assets/css/main.css'],
