@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     'nuxt-svgo'
   ],
+  
   svgo: {
     autoImportPath: "./assets/icons"
   },
