@@ -14,9 +14,10 @@ export default defineNuxtConfig({
     autoImportPath: "./assets/icons"
   },
 pwa: {
+    registerType: "autoUpdate",
     devOptions: {
       enabled: true,
-      type: 'module'
+      type: 'classic'
     },
     manifest: {
       name: 'accounts-manager',
@@ -33,6 +34,7 @@ pwa: {
           type: 'image/png',
           purpose: 'any'
         },
+
         {
           src: 'pwa-512x512.png', 
           sizes: '512x512',
@@ -42,8 +44,11 @@ pwa: {
       ]
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
-      navigateFallback: '/' 
+      globPatterns: process.env.NODE_ENV === 'development' ? [] : ['**/*.{js,css,html,png,svg,ico,mjs}'],
+      navigateFallback: '/',
+      cleanupOutdatedCaches: true,
+      clientsClaim: true,
+      skipWaiting: true
     },
   },
   css: ['~/assets/css/main.css'],
@@ -52,32 +57,3 @@ pwa: {
   },
   ssr: false
 })
-
-  // pwa: {
-  //   manifest: {
-  //     name: 'My Vault',
-  //     short_name: 'Vault',
-  //     description: 'Offline account manager',
-  //     theme_color: '#ffffff',
-  //     icons: [
-  //       {
-  //         src: 'pwa-192x192.png', // You'll need to drop a 192x192 logo in your public/ folder
-  //         sizes: '192x192',
-  //         type: 'image/png'
-  //       },
-  //       {
-  //         src: 'pwa-512x512.png', // And a 512x512 logo in your public/ folder
-  //         sizes: '512x512',
-  //         type: 'image/png'
-  //       }
-  //     ]
-  //   },
-  //   workbox: {
-  //     navigateFallback: '/',
-  //     globPatterns: ['**/*.{js,css,html,png,svg,ico}']
-  //   },
-  //   devOptions: {
-  //     enabled: true,
-  //     type: 'module'
-  //   }
-  // }

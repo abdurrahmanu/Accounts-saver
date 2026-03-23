@@ -10,7 +10,7 @@
     @touchend="selectMode.stop($event, account.id)" 
     @mouseup="selectMode.stop($event, account.id)"
     @mousedown="selectMode.start($event, account.id)"
-    class="text-xs px-4 pl-2k py-2 border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
+    class="text-xs px-4 pl-1 py-2 border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
         <div class="flex justify-between w-full">
           <div>
             <div class="flex">
@@ -65,7 +65,7 @@
           <SvgUnview v-else class="w-5"/>
         </div>
 
-        <div @click="editAccount" v-if="singleSelect" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
+        <div v-if="multiSelect" @click="editAccount(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
           <SvgEdit class="w-5"/>
         </div>
     </div>
@@ -77,7 +77,7 @@ const selectMode = useSelectListStore()
 const {selectedList, ongoingSelection} = storeToRefs(selectMode)
 
 const accountStore = useAccountStore()
-const {selectedBank, toggleEditAccountModal, seeMore, toggleDeleteAccountModal, singleDelete} = storeToRefs(accountStore)
+const {selectedBank, singleEdit, toggleEditAccountModal, seeMore, toggleDeleteAccountModal, singleDelete} = storeToRefs(accountStore)
 const {toggleFav} = accountStore
 
 const emit = defineEmits<{
@@ -110,7 +110,8 @@ const multiSelect = computed(() => {
   return selectedList.value.length && selectedList.value.includes(props.account.id)
 })
 
-const editAccount = () => {
+const editAccount = (id: string) => {
+  singleEdit.value = id
   toggleEditAccountModal.value = !toggleEditAccountModal.value      
 }
 

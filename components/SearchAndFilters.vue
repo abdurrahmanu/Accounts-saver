@@ -13,7 +13,7 @@
       <div class="flex items-center w-full gap-2">
         <div class="bg-white w-[75%] relative md:w-64 h-20 ring-slate-300 rounded-md p-2">
           <div v-if="accounts.length" class="relative overflow-y-scroll rounded-md bg-white">
-            <ul v-if="accounts.length" class="flex py-5 pt-0 gap-2 flex-wrap">
+            <ul v-if="accounts.length" class="flex py-5 pt-1 gap-2 flex-wrap">
               <li 
               @click="selectedBank = 'favourites'"
               :class="{

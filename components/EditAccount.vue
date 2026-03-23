@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 const accountStore = useAccountStore()
-const {toggleEditAccountModal} = storeToRefs(accountStore)
+const {toggleEditAccountModal, singleEdit, accounts} = storeToRefs(accountStore)
 const {addAccount} = accountStore
 
 interface FormFieldInterface {
@@ -42,14 +42,12 @@ interface FormFieldInterface {
     collection: string | boolean  
 }
 
-const props = defineProps<{
-    account: Account
-}>()
+const account = accounts.value.filter(acc => acc.id === singleEdit.value)[0]
 
 const requiredFields = ['name', 'accountName', 'bank']
 
 const reducedAccount = computed(() => {    
-    const {favourite, selected, id, ...rest} = props.account    
+    const {favourite, selected, id, ...rest} = account    
     return rest
 })
 
@@ -61,23 +59,23 @@ const requiredFieldIsEmpty = computed(() => {
 })
 
 const readOnlyForm = {
-    name: props.account.name, 
-    nickname: props.account.nickname, 
-    bank: props.account.bank, 
-    accountNumber: props.account.accountNumber, 
-    phoneNumber: props.account.phoneNumber, 
-    favourite: props.account.favourite, 
-    collection: props.account.collection
+    name: account.name, 
+    nickname: account.nickname, 
+    bank: account.bank, 
+    accountNumber: account.accountNumber, 
+    phoneNumber: account.phoneNumber, 
+    favourite: account.favourite, 
+    collection: account.collection
 }
 
 const form = reactive({ 
-    name: props.account.name, 
-    nickname: props.account.nickname, 
-    bank: props.account.bank, 
-    accountNumber: props.account.accountNumber, 
-    phoneNumber: props.account.phoneNumber, 
-    collection: props.account.collection,
-    favourite: props.account.favourite, 
+    name: account.name, 
+    nickname: account.nickname, 
+    bank: account.bank, 
+    accountNumber: account.accountNumber, 
+    phoneNumber: account.phoneNumber, 
+    collection: account.collection,
+    favourite: account.favourite, 
 })
 
 const placeholders = { name: 'Aliyu Musa', nickname: 'MTM', bank: 'Access Bank', accountNumber: '0123456789' , phoneNumber: '081234567', collection: 'Friend'}
@@ -96,7 +94,7 @@ const editAccount = () => {
         favourite: form.favourite,
         collection: form.collection,
         selected: false,
-    }, props.account.id)
+    }, account.id)
 
     toggleEditAccountModal.value = false        
 }

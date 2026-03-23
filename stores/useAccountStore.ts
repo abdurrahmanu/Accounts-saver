@@ -24,6 +24,7 @@ export const useAccountStore = defineStore('accountStore', () => {
   const view = computed(() => collectionStore.view)
   
   const singleDelete = ref('')
+  const singleEdit = ref('')
   const seeMore = ref('')
   const toggleEditAccountModal = ref(false)
   const addNewAccount = ref(false)
@@ -186,6 +187,7 @@ export const useAccountStore = defineStore('accountStore', () => {
     uniqueBanks, 
     seeMore,
     singleDelete,
+    singleEdit,
     addNewAccount,
     toggleFav,
     toggleEditAccountModal,
