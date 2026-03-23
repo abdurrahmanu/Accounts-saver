@@ -18,15 +18,13 @@
         </div>
       </button>
 
-      <div v-if="view === 'collections'" class="flex items-center justify-end px-3">
-        <button @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-3 py-1 hover:slate-300 cursor-pointer ring ring-slate-300 flex items-center gap-2 rounded-md">
-            {{ toggleCollectionForm ? 'Close Form' : 'Add Collection' }} 
-            <div>
-                <SvgPlus v-if="!toggleCollectionForm" class="w-4"/>
-                <SvgMinus v-else class="w-4"/>
-            </div>
-        </button>
-      </div>
+      <button v-if="view === 'collections'" @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-2 py-1 hover:slate-300 cursor-pointer ring ring-slate-400 flex items-center gap-2 rounded-md">
+          {{ toggleCollectionForm ? 'Close Form' : 'Add Collection' }} 
+          <div>
+              <SvgPlus v-if="!toggleCollectionForm" class="w-4"/>
+              <SvgMinus v-else class="w-4"/>
+          </div>
+      </button>
     </div>
   </header>
 </template>

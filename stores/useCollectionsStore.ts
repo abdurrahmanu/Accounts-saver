@@ -12,7 +12,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
   const listStore = useSelectListStore()
   const collections = ref<string[]>([])
   const filteredCollections = ref<string[]>([])
-  const view = ref<'collections' | 'bank'>('collections')
+  const view = ref<'collections' | 'bank'>('bank')
 
   const selectedCollection = ref('')
   const isCollection = ref(false)

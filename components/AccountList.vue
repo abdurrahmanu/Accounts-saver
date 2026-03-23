@@ -8,9 +8,10 @@
       <p v-if="accounts.length" class="uppercase font-mono pr-2">{{ selectedBank }} ({{ numberOfAccountsInList }})</p>
     </div>
     
-    <div v-if="filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-10 bg-white">
-      <SvgBox class="w-40 mx-auto" />
-      No accounts found. add some accounts!
+    <div v-if="filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-3 bg-white">
+      <SvgBox class="w-30 -mb-10 mx-auto" />
+      No accounts found. 
+      <p>Add some accounts</p>
     </div>
 
     <div v-for="category in filteredAndCategorizedAccounts" :key="category.bankName" class="bg-white">

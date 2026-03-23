@@ -11,36 +11,38 @@
       </div>
       
       <div class="flex items-center w-full gap-2">
-        <div v-if="accounts.length" class="relative md:w-64 h-20 ring ring-slate-300 p-2 overflow-y-scroll rounded-md bg-white w-[75%]">
-          <ul v-if="accounts.length" class="flex py-5 pt-0 gap-2 flex-wrap">
+        <div class="bg-white w-[75%] relative md:w-64 h-20 ring-slate-300 rounded-md p-2">
+          <div v-if="accounts.length" class="relative overflow-y-scroll rounded-md bg-white">
+            <ul v-if="accounts.length" class="flex py-5 pt-0 gap-2 flex-wrap">
+              <li 
+              @click="selectedBank = 'favourites'"
+              :class="{
+                'ring-green-400 text-green-700 bg-green-200': selectedBank === 'favourites',
+                'ring-slate-300': selectedBank !== 'favourites'
+              }" 
+            class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
+            >Favourites</li>
             <li 
-            @click="selectedBank = 'favourites'"
+            @click="selectedBank = 'all'"
             :class="{
-              'ring-green-400 text-green-700 bg-green-200': selectedBank === 'favourites',
-              'ring-slate-300': selectedBank !== 'favourites'
+              'ring-green-400 text-green-700 bg-green-200': selectedBank === 'all',
+              'ring-slate-300': selectedBank !== 'all'
             }" 
-          class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
-          >Favourites</li>
-          <li 
-          @click="selectedBank = 'all'"
-          :class="{
-            'ring-green-400 text-green-700 bg-green-200': selectedBank === 'all',
-            'ring-slate-300': selectedBank !== 'all'
-          }" 
-          class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
-          >All</li>
-          <li 
-          @click="selectedBank = bank"
-          :class="{
-            'ring-green-400 text-green-700 bg-green-200': selectedBank === bank,
-            'ring-slate-400': selectedBank !== bank
-          }" 
-          class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
-          v-for="(bank, index) in uniqueBanks" 
-          :key="index">{{ bank }}</li>
-        </ul>
-      </div>
-      <p v-else class="text-xs text-red-300">No filters available</p>
+            class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
+            >All</li>
+            <li 
+            @click="selectedBank = bank"
+            :class="{
+              'ring-green-400 text-green-700 bg-green-200': selectedBank === bank,
+              'ring-slate-300': selectedBank !== bank
+            }" 
+            class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
+            v-for="(bank, index) in uniqueBanks" 
+            :key="index">{{ bank }}</li>
+          </ul>
+        </div>
+        <p v-else class="text-xs text-red-400">No filters available</p>
+        </div>
       <ViewType />
     </div>
   </div>

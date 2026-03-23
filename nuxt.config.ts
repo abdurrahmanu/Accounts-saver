@@ -13,6 +13,10 @@ export default defineNuxtConfig({
     autoImportPath: "./assets/icons"
   },
   pwa: {
+    devOptions: {
+      enabled: true,
+      type: 'classic'
+    },
     manifest: {
       name: 'accounts-manager',
       short_name: 'AManager',
@@ -31,7 +35,10 @@ export default defineNuxtConfig({
           purpose: 'maskable'
         },
       ]
-    }
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+    },
   },
   css: ['~/assets/css/main.css'],
   vite: {
