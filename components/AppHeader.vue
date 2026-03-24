@@ -18,7 +18,7 @@
         </div>
       </button>
 
-      <button v-if="view === 'collections'" @click="toggleCollectionForm = !toggleCollectionForm" class="text-xs px-2 py-1 hover:slate-300 cursor-pointer ring ring-slate-400 flex items-center gap-2 rounded-md">
+      <button v-if="view === 'collections'" @click="toggleAddCollectionForm" class="text-xs px-2 py-1 hover:slate-300 cursor-pointer ring ring-slate-400 flex items-center gap-2 rounded-md">
           {{ toggleCollectionForm ? 'Close Form' : 'Add Collection' }} 
           <div>
               <SvgPlus v-if="!toggleCollectionForm" class="w-4"/>
@@ -36,8 +36,18 @@ const {addNewAccount} = storeToRefs(accountStore)
 const collectionStore = useCollectionStore()
 const {toggleCollectionForm, view} = storeToRefs(collectionStore)
 
+const selectStore = useSelectStore()
+const {cancel} = selectStore
+
 const toggleAddAccountForm = () => {
+  cancel()
   addNewAccount.value = !addNewAccount.value
   toggleCollectionForm.value = false
+}
+
+const toggleAddCollectionForm = () => {
+  cancel()
+  toggleCollectionForm.value = !toggleCollectionForm.value
+  addNewAccount.value = false
 }
 </script>

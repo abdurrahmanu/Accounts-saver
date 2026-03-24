@@ -6,7 +6,7 @@
         'border-l-green-500': account.favourite,
         'border-l-transparent': !account.favourite
       }"
-    @touchstart.prevent="selectMode.start($event, account.id)" 
+    @touchstart="selectMode.start($event, account.id)" 
     @touchend="selectMode.stop($event, account.id)" 
     @mouseup="selectMode.stop($event, account.id)"
     @mousedown="selectMode.start($event, account.id)"
@@ -23,8 +23,8 @@
           </div>
           <div class="space-y-1 w-full">
             <h4 class="font-medium text-gray-800 uppercase">{{ account.name }} <span v-if="account.nickname" class="text-gray-500 font-normal text-sm">({{ account.nickname }})</span></h4>
-            <div class="flex gap-1">
-              <p v-if="selectedBank === 'all' || seeMore === account.id" class="bg-gray-100 ring ring-black/20 w-fit p-1 rounded-md font-mono">{{ account.bank }}</p>
+            <div class="flex gap-1 flex-wrap">
+              <p v-if="selectedBank === 'all' || seeMore === account.id" class="bg-gray-100 ring ring-black/40 w-fit p-1 font-mono text-green-600">{{ account.bank }}</p>
               <p class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.accountNumber }}</p>
               <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)">
                 <p v-if="account.collection" class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.collection }}</p>
