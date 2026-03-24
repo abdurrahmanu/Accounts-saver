@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-export const useSelectListStore = defineStore('selectList', () => {
+export const useSelectStore = defineStore('selectList', () => {
   const collectionStore = useCollectionStore()
   const accountStore = useAccountStore()
   const ongoingSelection = ref(false)
@@ -9,6 +9,7 @@ export const useSelectListStore = defineStore('selectList', () => {
   const selectedList = ref<string[]>([])
   const event = ref<'up' | 'down'>()
   const activateTimer = ref<ReturnType<typeof setTimeout>  | undefined>(undefined)
+  const allSelected = ref(false)
 
   const selectedAccounts = computed<Account[]>(() => {
     return accountStore.accounts.filter((account: Account) => selectedList.value.includes(account.id))
@@ -19,11 +20,11 @@ export const useSelectListStore = defineStore('selectList', () => {
               
     // remove item from the list      
     let alreadySelectedItem = selectedList.value.indexOf(id)
-    if (alreadySelectedItem !== -1) {                    
+    if (alreadySelectedItem !== -1) {      
+      allSelected.value = false              
       selectedList.value.splice(alreadySelectedItem, 1)          
       return
     } else {      
-      
       if (ongoingSelection.value) {
         selectedList.value.push(id)        
       }
@@ -39,7 +40,7 @@ export const useSelectListStore = defineStore('selectList', () => {
   const stop = (event: Event, id: string) => {
     if (selectedList.value.length) return
     if (activateTimer.value) {
-      if(collectionStore.view === 'collections' && !ongoingSelection.value) {
+      if(collectionStore.view === 'collections' && !ongoingSelection.value && !collectionStore.isCollection) {
         collectionStore.openCollection(id)          
       }
       clearTimeout(activateTimer.value)
@@ -62,14 +63,20 @@ export const useSelectListStore = defineStore('selectList', () => {
         }
       })
     }
+
+    allSelected.value = true
   }
 
-  const cancel = () => {
+  const cancel = (clearSelectAll?: boolean) => {
+    if (!clearSelectAll) {
+      ongoingSelection.value = false
+    }
     selectedList.value = []
-    ongoingSelection.value = false
+    allSelected.value = false
   }
 
   return { 
+    allSelected,
     activateTimer,
     selectedAccounts,
     selectedList,

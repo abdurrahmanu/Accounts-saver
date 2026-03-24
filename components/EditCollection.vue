@@ -45,17 +45,16 @@ const formIsChanged = computed(() => {
                 </div>
             </div>
         </div>
-        <AccountSelect 
-        v-for="(account, index) in accounts" :key="index"
-        :account="account" 
-        :toggle="openAccountsDropdown" 
-        v-model="form.selectedAccounts[account.id as keyof object]" />
+        <div class="overflow-y-scroll max-h-[60dvh]">
+            <AccountSelect 
+            v-for="(account, index) in accounts" :key="index"
+            :account="account" 
+            :toggle="openAccountsDropdown" 
+            v-model="form.selectedAccounts[account.id as keyof object]" />
+        </div>
 
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3 py-1">
-                <!-- <div @click="form.favourite = !form.favourite" class="ring-1 ring-green-500 rounded-sm p-1 flex items-center justify-center">
-                    <div :class="[form.favourite && 'bg-green-600']" class="rounded-sm p-2"></div>
-                </div> -->
                 <span class="text-sm">Add to Favorites</span>
             </div>
             <div class="space-x-2">

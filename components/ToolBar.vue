@@ -6,27 +6,29 @@ const accountStore = useAccountStore()
 const { toggleDeleteAccountModal, accounts } = storeToRefs(accountStore)
 const {toggleFav} = accountStore
 
-const selectMode = useSelectListStore()
-const { selectedList, ongoingSelection } = storeToRefs(selectMode)
-const { selectAll, cancel } = selectMode
+const selectMode = useSelectStore()
+const { selectedList, ongoingSelection, allSelected } = storeToRefs(selectMode)
+const { selectAll, cancel, } = selectMode
 
 const collectionStore = useCollectionStore()
-const {view, collections} = storeToRefs(collectionStore)
+const {view, collections, isCollection} = storeToRefs(collectionStore)
 
-const svgs: Record<string, string> = {
-  favourite: '/faved.svg',
-  delete: '/delete.svg',
-  'select all': '/selectall.svg',
-  cancel: '/cancel.svg',
-}
+const svgs = computed(() => {
+  return {
+    [view.value === 'bank' ? 'sort': 'move']: view.value === 'bank' ? '/back.svg': '/back.svg',
+    delete: '/delete.svg',
+    'select all': '/selectall.svg',
+    cancel: '/cancel.svg',
+  }
+})
 
 const options = computed(() => {
   const count = selectedList.value.length
   const total = view.value === 'bank' ? accounts.value.length : collections.value.length
 
   return [
-    { id: 'favourite', 
-      label: count === 0 ? 'add fav' : `add fav(${count})` 
+    { id: view.value === 'collections' && isCollection.value ? 'move' : 'sort',
+      label: view.value === 'collections' && isCollection.value ? 'move' : 'sort'
     },
     { 
       id: 'delete', 
@@ -40,8 +42,15 @@ const options = computed(() => {
 // 3. Centralized Action Handler
 const useOption = (id: string) => {
   switch (id) {
+    case 'move':
+      
+      break
+    case 'sort':
+
+      break
     case 'select all':
-      selectAll(view.value)
+      if (allSelected.value) cancel(true)
+      else selectAll(view.value)
       break
     case 'cancel':
       cancel()
@@ -50,7 +59,7 @@ const useOption = (id: string) => {
       if (!selectedList.value.length) return
       toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value    
       break
-    case 'favourite':
+    case 'sort':
       toggleFav()
       break
   }

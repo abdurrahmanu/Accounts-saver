@@ -37,7 +37,7 @@ const { toggleDeleteAccountModal, singleDelete, accounts } = storeToRefs(account
 const collectionStore = useCollectionStore()
 const {view} = storeToRefs(collectionStore)
 
-const selectList = useSelectListStore()
+const selectList = useSelectStore()
 const { selectedAccounts, selectedList } = storeToRefs(selectList)
 
 const isSingle = computed(() => singleDelete.value || selectedAccounts.value.length === 1)

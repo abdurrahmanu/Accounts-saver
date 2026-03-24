@@ -36,7 +36,7 @@
 <template>
     <div v-if="toggle">
         <ul class="max-h-40 w-full absolute z-2 bg-white ring ring-slate-300 rounded-md px-1 overflow-y-scroll">
-            <li @click="emitEvent(bank.name)" v-for="(bank, index) in filteredBanks || banks" :key="index" class="hover:bg-slate-200 transition-all duration-100 p-1 z-3">{{bank}}</li>
+            <li @click="emitEvent(bank.name)" v-for="(bank, index) in filteredBanks || banks" :key="index" class="hover:bg-slate-200 transition-all duration-100 p-1 z-3">{{bank.name}}</li>
         </ul>
     </div>
 </template>

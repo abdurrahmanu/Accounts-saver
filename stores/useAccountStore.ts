@@ -17,7 +17,7 @@ export const useAccountStore = defineStore('accountStore', () => {
   const {collections, filteredCollections} = storeToRefs(collectionStore)
   const {createCollection} = collectionStore
 
-  const selectStore = useSelectListStore()
+  const selectStore = useSelectStore()
   const {selectedList} = storeToRefs(selectStore)
 
   const currentCollection = computed(() => collectionStore.currentCollection)

@@ -9,7 +9,7 @@ export interface collectionForm {
 
 export const useCollectionStore = defineStore('accountsCollection', () => {
   const accountStore = useAccountStore()
-  const listStore = useSelectListStore()
+  const listStore = useSelectStore()
   const collections = ref<string[]>([])
   const filteredCollections = ref<string[]>([])
   const view = ref<'collections' | 'bank'>('bank')

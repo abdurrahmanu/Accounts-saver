@@ -1,8 +1,8 @@
 <template>
-    <div class="flex justify-between">
+    <div class="relative flex justify-between">
       <div :class="{
-        'bg-slate-200 hover:bg-slate-200': selectedList.includes(account.id),
-        'hover:bg-zinc-200': !selectedList.includes(account.id),
+        'bg-black/10 hover:bg-black/10': selectedList.includes(account.id),
+        'hover:bg-black/20': !selectedList.includes(account.id),
         'border-l-green-500': account.favourite,
         'border-l-transparent': !account.favourite
       }"
@@ -10,36 +10,28 @@
     @touchend="selectMode.stop($event, account.id)" 
     @mouseup="selectMode.stop($event, account.id)"
     @mousedown="selectMode.start($event, account.id)"
-    class="text-xs px-4 pl-1 py-2 border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
-        <div class="flex justify-between w-full">
-          <div>
-            <div class="flex">
-              <div class="flex gap-2 items-center">
-                <div v-if="ongoingSelection">
-                  <SvgChecked v-if="selectedList.includes(account.id)" class="w-5" />
-                  <SvgUnchecked v-else class="w-5" alt=""/>
-                </div>
-                <div v-if="seeMore === account.id">
-                  <SvgUser class="w-16" />
-                </div>
-                <div>
-                  <div class="flex gap-2 items-start">
-                    <div>
-                      <h4 class="font-medium text-gray-800 uppercase">{{ account.name }} <span v-if="account.nickname" class="text-gray-500 font-normal text-sm">({{ account.nickname }})</span></h4>
-                      <p class="text-gray-800 mt-1 font-mono bg-gray-200 inline-block px-2 py-1 rounded">
-                        {{ account.accountNumber }}
-                      </p>
-                      <p v-if="selectedBank === 'all'">{{ account.bank }}</p>
-                    </div>
-                  </div>
-                </div>
+    class="text-xs border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
+        <div class="flex gap-2 w-full bg-yellow py-2 pl-1 px-4 items-center">
+          <div class="flex items-center px-1 space-x-2">
+            <div v-if="ongoingSelection">
+              <SvgChecked v-if="selectedList.includes(account.id)" class="w-5" />
+              <SvgUnchecked v-else class="w-5" alt=""/>
+            </div>
+            <div v-if="seeMore === account.id" class="rounded-full p-2 ring ring-green-500 flex">
+              <p v-for="(initial, index) in nameInitials" :key="index" class="text-2xl font-bold uppercase">{{ initial }}</p>
+            </div>
+          </div>
+          <div class="space-y-1 w-full">
+            <h4 class="font-medium text-gray-800 uppercase">{{ account.name }} <span v-if="account.nickname" class="text-gray-500 font-normal text-sm">({{ account.nickname }})</span></h4>
+            <div class="flex gap-1">
+              <p v-if="selectedBank === 'all' || seeMore === account.id" class="bg-gray-100 ring ring-black/20 w-fit p-1 rounded-md font-mono">{{ account.bank }}</p>
+              <p class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.accountNumber }}</p>
+              <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)">
+                <p v-if="account.collection" class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.collection }}</p>
+                <p v-if="account.phoneNumber" class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.phoneNumber }}</p>
               </div>
             </div>
-            <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)" class="min-w-40 ring rounded-md p-2 m-1 gap-4 ring-slate-200 bg-slate-200">
-              <p v-if="account.phoneNumber" class=""><span class="font-bold">PHONE NUMBER:</span> {{ account.phoneNumber }}</p>
-              <p v-if="account.collection" class=""><span class="font-bold">COLLECTION:</span> {{ account.collection }}</p>
-            </div>
-        </div>
+          </div>
         </div> 
       </div>
 
@@ -49,36 +41,47 @@
           <SvgCopied v-else class="w-7 p-1" src="/copied.svg" />
         </div>
 
-        <div v-if="multiSelect" class="rounded-md flex items-center">
-          <div @click="toggleFav(account.id)" class="p-1 rounded-md hover:bg-green-300/30 px-1 flex items-center">
-            <SvgFav v-if="account.favourite" class="w-5"/>
-            <SvgUnfav v-else class="w-5"/>
-          </div>
-
-          <div @click="delAccount(account.id)" class="p-1 rounded-md hover:bg-red-600/20 px-1 flex items-center">
-            <SvgDelete class="w-5"/>
-          </div>
-        </div>
-        
         <div @click="toggleSeeMore(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1.5 flex items-center">
-          <SvgView v-if="seeMore === account.id" class="w-6"/>
+          <SvgView v-if="seeMore === account.id" class="w-5"/>
           <SvgUnview v-else class="w-5"/>
         </div>
 
-        <div v-if="multiSelect" @click="editAccount(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
-          <SvgEdit class="w-5"/>
+        <div v-if="multiSelect" class="rounded-md flex items-center">
+          <div @click="asyncWaitFunc" :class="[toggleMenu ? 'hover:bg-red-200' : 'hover:bg-black/20']" class="p-1 rounded-md flex items-center">
+            <SvgCancel v-if="toggleMenu" class="w-5" />
+            <SvgMore v-else class="w-5" />
+          </div>
         </div>
+        
+        <div ref="menuElement" id="value" v-if="toggleMenu" class="absolute -bottom-12 ring ring-slate-400 z-2 right-1 rounded-md bg-slate-200">
+          <div class="flex gap-2 p-2 justify-center">
+          <div @click="toggleFav(account.id)" class="p-1 rounded-md hover:bg-green-300/30 px-1 flex items-center">
+            <SvgFav v-if="account.favourite" class="w-5"/>
+            <SvgUnfav v-else class="w-5"/>
+          </div>  
+            <div @click="delAccount(account.id)" class="p-1 rounded-md hover:bg-red-600/20 px-1 flex items-center w-fit">
+              <SvgDelete class="w-5"/>
+            </div>
+            <div @click="editAccount(account.id)" class="rounded-md hover:bg-black/20 p-1 flex items-center w-fit">
+              <SvgEdit class="w-5"/>
+            </div>
+          </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const selectMode = useSelectListStore()
+const selectMode = useSelectStore()
 const {selectedList, ongoingSelection} = storeToRefs(selectMode)
 
 const accountStore = useAccountStore()
 const {selectedBank, singleEdit, toggleEditAccountModal, seeMore, toggleDeleteAccountModal, singleDelete} = storeToRefs(accountStore)
 const {toggleFav} = accountStore
+
+const menuElement = ref<HTMLElement | null>(null)
+
+const toggleMenu = ref(false)
 
 const emit = defineEmits<{
   accountID: [id: string]
@@ -102,10 +105,6 @@ const copyToClipboard = async () => {
   }
 }
 
-const singleSelect = computed(() => {
-  return selectedList.value.length === 1 && selectedList.value[0] === props.account.id
-})
-
 const multiSelect = computed(() => {
   return selectedList.value.length && selectedList.value.includes(props.account.id)
 })
@@ -124,4 +123,39 @@ const toggleSeeMore = (id: string) => {
   if (seeMore.value === id) seeMore.value = ''
   else seeMore.value = id
 }
+
+const asyncWaitFunc = async () => {
+  setTimeout(() => {
+    toggleMenu.value = !toggleMenu.value
+  }, 0);
+}
+
+const menuClick = (event: Event) => {      
+  const target = event.target
+  const el = menuElement.value
+
+  if (toggleMenu.value) {
+    if (el instanceof HTMLElement && !(el === target || el.contains(target as Node) || event.composedPath().includes(el) )) {
+        toggleMenu.value = false
+      }
+  }
+}
+
+const nameInitials = computed(() => {
+  let initials = []
+  let dividedName = props.account.name.split(' ')
+  if (dividedName.length > 1) {
+    initials.push(dividedName[0].slice(0,1))
+    initials.push(dividedName[1].slice(0,1))
+  } 
+  else initials.push(dividedName[0].slice(0,1))
+
+  return initials
+})
+
+window.addEventListener('click', menuClick)
+
+onUnmounted(() => {
+  window.removeEventListener('click', menuClick)
+})
 </script>

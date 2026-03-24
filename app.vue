@@ -35,7 +35,7 @@ const {addNewAccount, accounts, toggleEditAccountModal} = storeToRefs(accountSto
 const collectionStore = useCollectionStore()
 const {toggleEditCollectionModal, toggleCollectionForm} = storeToRefs(collectionStore)
 
-const selectStore = useSelectListStore()
+const selectStore = useSelectStore()
 const {selectedList} = storeToRefs(selectStore)
 
 const editingAccount = computed(() => {

@@ -11,39 +11,37 @@
       </div>
       
       <div class="flex items-center w-full gap-2">
-        <div class="bg-white w-[75%] relative md:w-64 h-20 ring-slate-300 rounded-md p-2">
-          <div v-if="accounts.length" class="relative overflow-y-scroll rounded-md bg-white">
-            <ul v-if="accounts.length" class="flex py-5 pt-1 gap-2 flex-wrap">
-              <li 
-              @click="selectedBank = 'favourites'"
-              :class="{
-                'ring-green-400 text-green-700 bg-green-200': selectedBank === 'favourites',
-                'ring-slate-300': selectedBank !== 'favourites'
-              }" 
-            class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
-            >Favourites</li>
+        <div class="bg-white w-[75%] relative md:w-64 ring-slate-300 rounded-md">
+          <ul v-if="accounts.length" class="relative rounded-md bg-white flex p-2 gap-2 flex-wrap h-20 overflow-y-scroll">
             <li 
-            @click="selectedBank = 'all'"
+            @click="selectedBank = 'favourites'"
             :class="{
-              'ring-green-400 text-green-700 bg-green-200': selectedBank === 'all',
-              'ring-slate-300': selectedBank !== 'all'
+              'ring-green-400 text-green-700 bg-green-200': selectedBank === 'favourites',
+              'ring-slate-300': selectedBank !== 'favourites'
             }" 
-            class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
-            >All</li>
-            <li 
-            @click="selectedBank = bank"
-            :class="{
-              'ring-green-400 text-green-700 bg-green-200': selectedBank === bank,
-              'ring-slate-300': selectedBank !== bank
-            }" 
-            class="w-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
-            v-for="(bank, index) in uniqueBanks" 
-            :key="index">{{ bank }}</li>
+          class="w-fit h-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
+          >Favourites</li>
+          <li 
+          @click="selectedBank = 'all'"
+          :class="{
+            'ring-green-400 text-green-700 bg-green-200': selectedBank === 'all',
+            'ring-slate-300': selectedBank !== 'all'
+          }" 
+          class="w-fit h-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
+          >All</li>
+          <li 
+          @click="selectedBank = bank"
+          :class="{
+            'ring-green-400 text-green-700 bg-green-200': selectedBank === bank,
+            'ring-slate-300': selectedBank !== bank
+          }" 
+          class="w-fit h-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer `py-[2px]` whitespace-nowrap text-xs ring-1 rounded-md" 
+          v-for="(bank, index) in uniqueBanks" 
+          :key="index">{{ bank }}</li>
           </ul>
+          <p v-else class="text-xs text-red-400">No filters available</p>
         </div>
-        <p v-else class="text-xs text-red-400">No filters available</p>
-        </div>
-      <ViewType />
+        <ViewType />
     </div>
   </div>
 </div>
@@ -54,4 +52,11 @@
 <script setup lang="ts">
 const accountStore = useAccountStore()
 const {uniqueBanks, selectedBank, searchQuery, accounts, filteredAndCategorizedAccounts} = storeToRefs(accountStore)
+
+const selectStore = useSelectStore()
+const {cancel} = selectStore
+  
+watch(selectedBank, newVal => {
+  cancel()
+})
 </script>

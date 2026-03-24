@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 const accountsCollection = useCollectionStore()
-const {view, toggleCollectionForm} = storeToRefs(accountsCollection)
+const {view} = storeToRefs(accountsCollection)
 
-const listStore = useSelectListStore()
+const listStore = useSelectStore()
 const {cancel} = listStore
 
 const changeView = (collection: 'bank' | 'collections') => {

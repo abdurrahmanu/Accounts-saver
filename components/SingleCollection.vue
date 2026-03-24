@@ -3,11 +3,11 @@ const accountsCollection = useCollectionStore()
 const { toggleEditCollectionModal, selectedCollection} = storeToRefs(accountsCollection)
 const {openCollection} = accountsCollection
 
-const selectMode = useSelectListStore()
+const selectMode = useSelectStore()
 const {selectedList, ongoingSelection} = storeToRefs(selectMode)
 
 const accountStore = useAccountStore()
-const {accounts, selectedBank, filteredAndCategorizedAccounts} = storeToRefs(accountStore)
+const {accounts, selectedBank} = storeToRefs(accountStore)
 
 const props = defineProps<{
   collection: string,
