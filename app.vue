@@ -51,8 +51,4 @@ const addNewAccountOrCollection = computed(() => {
   
 // })
 
-on(() => {
-  console.log('updated');
-  
-})
 </script>
