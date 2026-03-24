@@ -15,9 +15,7 @@ export const useSelectStore = defineStore('selectList', () => {
     return accountStore.accounts.filter((account: Account) => selectedList.value.includes(account.id))
   })
 
-  const start = (event: Event, id: string) => {  
-    if (event.type === 'touchstart') event.preventDefault()
-              
+  const start = (event: Event, id: string) => {                
     // remove item from the list      
     let alreadySelectedItem = selectedList.value.indexOf(id)
     if (alreadySelectedItem !== -1) {      

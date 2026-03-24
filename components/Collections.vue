@@ -3,7 +3,7 @@ const accountStore = useAccountStore()
 const {selectedBank} = storeToRefs(accountStore)
 
 const accountsCollection = useCollectionStore()
-const {collections, showAccountsList, toggleCollectionForm, view, filteredCollections, currentCollection} = storeToRefs(accountsCollection)
+const { showAccountsList, view, filteredCollections} = storeToRefs(accountsCollection)
 </script>
 
 <template>

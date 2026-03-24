@@ -64,7 +64,7 @@ export const useAccountStore = defineStore('accountStore', () => {
 
     // Create New Collection
     if (account.collection && !collections.value.includes(account.collection)) {      
-      createCollection({name: account.collection, selectedAccounts: {[id as keyof object]: true}})
+      createCollection({name: account.collection.toLowerCase(), selectedAccounts: {[id as keyof object]: true}})
     }
   }
 
@@ -138,7 +138,7 @@ export const useAccountStore = defineStore('accountStore', () => {
       let store: string[] = []
       
       if (selectedBank.value === 'all') {
-        store = collections.value
+        store = collections.value        
       } else if (selectedBank.value === 'favourites') {
         store = accounts.value.filter(acc => acc.collection.length && acc.favourite === true).map(acc => acc.collection)
       } else {

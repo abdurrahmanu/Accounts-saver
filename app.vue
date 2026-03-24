@@ -45,4 +45,14 @@ const editingAccount = computed(() => {
 const addNewAccountOrCollection = computed(() => {
   return addNewAccount.value || toggleCollectionForm.value
 })
+
+// window.addEventListener('popstate', (event) => {
+//   console.log('tester');
+  
+// })
+
+on(() => {
+  console.log('updated');
+  
+})
 </script>

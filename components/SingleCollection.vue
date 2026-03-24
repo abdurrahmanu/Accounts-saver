@@ -14,7 +14,15 @@ const props = defineProps<{
 }>()
 
 const numberOfAccountsInCollectionFilter = computed(() => {
-  return accounts.value.filter(account => account.collection === props.collection && (account.bank === selectedBank.value || selectedBank.value === 'all' || (account.favourite && selectedBank.value === 'favourites'))).length
+  // if real bank - check | if favourite - check | if all, show all collections
+  return accounts.value.filter(account => {
+    let conventionalBank = !['favourite', 'all'].includes(account.bank)
+    
+    return account.collection === props.collection && 
+    ((conventionalBank && account.bank === selectedBank.value) || 
+    (selectedBank.value === 'all' && account.collection) || 
+    (account.favourite && selectedBank.value === 'favourites' && account.collection))
+  }).length
 })
 
 const editCollection = () => {  
@@ -25,21 +33,20 @@ const editCollection = () => {
 
 <template>
   <div
-    @touchstart="selectMode.start($event, collection)" 
-    @touchend="selectMode.stop($event, collection)" 
-    @mouseup="selectMode.stop($event, collection)"
-    @mousedown="selectMode.start($event, collection)"
+    @pointerdown="selectMode.start($event, collection)" 
+    @pointerup="selectMode.stop($event, collection)" 
+    @pointercancel="selectMode.stop($event, collection)"
     @click="!ongoingSelection && openCollection(collection)"
     :class="{
-      'bg-blue-100 hover:bg-blue-100': selectedList.includes(collection),
-      'hover:bg-green-100': !selectedList.includes(collection),
-      'border-red-200 border-2' : !numberOfAccountsInCollectionFilter
+      'bg-slate-200 hover:bg-slate-200': selectedList.includes(collection),
+      'hover:bg-slate-100': !selectedList.includes(collection),
+      'border-red-200 border' : !numberOfAccountsInCollectionFilter
     }"
     class="relative h-32 flex items-center justify-center rounded-lg uppercase ring ring-slate-300" >
       <div class="text-center">
         <p>{{ collection }}</p>
         <p class="text-xs py-2">{{ numberOfAccountsInCollectionFilter ? numberOfAccountsInCollectionFilter + ' accounts' : '' }}</p>
       </div>
-      <SvgEdit @touchstart.stop @touchend.stop @mouseup.stop @mousedown.stop @click.stop="editCollection" v-if='selectedList.includes(collection)' class="w-6 absolute bottom-2 right-2" />
+      <SvgEdit @pointerdown.stop @pointerup.stop @pointercancel.stop @click.stop="editCollection" v-if='selectedList.includes(collection)' class="w-6 absolute bottom-2 right-2" />
   </div>
   </template>

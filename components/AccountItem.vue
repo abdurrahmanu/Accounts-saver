@@ -6,13 +6,12 @@
         'border-l-green-500': account.favourite,
         'border-l-transparent': !account.favourite
       }"
-    @touchstart="selectMode.start($event, account.id)" 
-    @touchend="selectMode.stop($event, account.id)" 
-    @mouseup="selectMode.stop($event, account.id)"
-    @mousedown="selectMode.start($event, account.id)"
+    @pointerdown="start($event, account.id)" 
+    @pointerup="stop($event, account.id)" 
+    @pointercancel="stop($event, account.id)"
     class="text-xs border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
-        <div class="flex gap-2 w-full bg-yellow py-2 pl-1 px-4 items-center">
-          <div class="flex items-center px-1 space-x-2">
+        <div class="flex gap-2 w-full py-2 px-4 pl-2 items-center">
+          <div class="flex items-center space-x-2">
             <div v-if="ongoingSelection">
               <SvgChecked v-if="selectedList.includes(account.id)" class="w-5" />
               <SvgUnchecked v-else class="w-5" alt=""/>
@@ -23,10 +22,10 @@
           </div>
           <div class="space-y-1 w-full">
             <h4 class="font-medium text-gray-800 uppercase">{{ account.name }} <span v-if="account.nickname" class="text-gray-500 font-normal text-sm">({{ account.nickname }})</span></h4>
-            <div class="flex gap-1 flex-wrap">
-              <p v-if="selectedBank === 'all' || seeMore === account.id" class="bg-gray-100 ring ring-black/40 w-fit p-1 font-mono text-green-600">{{ account.bank }}</p>
+            <div class="flex gap-2 flex-wrap">
+              <p v-if="selectedBank === 'all' || seeMore === account.id" class="bg-gray-100 ring ring-black/20 w-fit p-1 rounded-md">{{ account.bank }}</p>
               <p class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.accountNumber }}</p>
-              <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)">
+              <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)" class="space-x-2">
                 <p v-if="account.collection" class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.collection }}</p>
                 <p v-if="account.phoneNumber" class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.phoneNumber }}</p>
               </div>
@@ -47,7 +46,7 @@
         </div>
 
         <div v-if="multiSelect" class="rounded-md flex items-center">
-          <div @click="asyncWaitFunc" :class="[toggleMenu ? 'hover:bg-red-200' : 'hover:bg-black/20']" class="p-1 rounded-md flex items-center">
+          <div ref="menuToggleElement" @click="asyncWaitFunc" :class="[toggleMenu ? 'hover:bg-red-200' : 'hover:bg-black/20']" class="p-1 rounded-md flex items-center">
             <SvgCancel v-if="toggleMenu" class="w-5" />
             <SvgMore v-else class="w-5" />
           </div>
@@ -72,14 +71,16 @@
 </template>
 
 <script setup lang="ts">
-const selectMode = useSelectStore()
-const {selectedList, ongoingSelection} = storeToRefs(selectMode)
+const selectStore = useSelectStore()
+const {selectedList, ongoingSelection} = storeToRefs(selectStore)
+const {start, stop} = selectStore
 
 const accountStore = useAccountStore()
 const {selectedBank, singleEdit, toggleEditAccountModal, seeMore, toggleDeleteAccountModal, singleDelete} = storeToRefs(accountStore)
 const {toggleFav} = accountStore
 
 const menuElement = ref<HTMLElement | null>(null)
+const menuToggleElement = ref<HTMLElement | null>(null)
 
 const toggleMenu = ref(false)
 
@@ -134,8 +135,8 @@ const menuClick = (event: Event) => {
   const target = event.target
   const el = menuElement.value
 
-  if (toggleMenu.value) {
-    if (el instanceof HTMLElement && !(el === target || el.contains(target as Node) || event.composedPath().includes(el) )) {
+  if (toggleMenu.value) {    
+    if (el instanceof HTMLElement && (target !== menuToggleElement.value && !menuToggleElement.value?.contains(target as ChildNode)) && !(el === target || el.contains(target as Node) || event.composedPath().includes(el))) {
         toggleMenu.value = false
       }
   }

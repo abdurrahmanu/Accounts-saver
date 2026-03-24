@@ -51,7 +51,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
         if (form.selectedAccounts[acc.id as keyof object]) {
           acc.collection = form.name.toLowerCase()
         }
-        return {...acc, collection: acc.collection}
+        return {...acc, collection: acc.collection.toLowerCase()}
       })
     }
   }
@@ -64,11 +64,11 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
       }
       // had collection but name is changed
       else if (acc.collection === selectedCollection.value) {
-        return {...acc, collection: form.name}
+        return {...acc, collection: form.name.toLowerCase()}
       }
       // didn't have collection name but it has now
       else if (form.selectedAccounts[acc.id as keyof object]) {
-        return {...acc, collection: form.name}
+        return {...acc, collection: form.name.toLowerCase()}
       }
       
       return acc
