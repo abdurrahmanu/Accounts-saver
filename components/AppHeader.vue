@@ -1,5 +1,5 @@
  <template>
-  <header class="sm:text-left py-5 shadow px-2 w-full bg-white flex items-center justify-between">
+  <header class="sm:text-left py-5 shadow px-2 w-full bg-white flex items-center justify-between h-fit">
     <div>
       <div class="flex items-center gap-1 top-1 text-xs font-bold">
         <SvgLogo class="w-10 rotate-12 relative -top-1"/>
@@ -21,7 +21,7 @@
     </NuxtLink>
     </div>
 
-    <div v-if="route.fullPath === '/accounts'">
+    <div v-if="route.fullPath.includes('accounts') && !route.fullPath.includes('/addAccount')">
       <NuxtLink to="/accounts/addAccount">
         <button @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
           Add Account

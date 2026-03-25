@@ -1,0 +1,24 @@
+<template>
+    <AppModal :toggle="correctPath">
+      <EditAccount :account="editingAccount"  />
+    </AppModal>
+</template>
+
+<script lang="ts" setup>
+const route = useRoute()
+const itemId = computed(() => route.params.id)
+
+const accountStore = useAccountStore()
+const {accounts} = storeToRefs(accountStore)
+
+const editingAccount = computed(() => {
+    return accounts.value.filter(account => account.id === itemId.value)[0]
+})
+
+const correctPath = computed(() => {    
+    if (route.fullPath.length && itemId.value) {
+        return route.fullPath === `/accounts/_/${editingAccount.value.id}/edit`
+    }
+    else return false
+}) 
+</script>

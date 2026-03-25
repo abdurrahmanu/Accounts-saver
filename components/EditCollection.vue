@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const collectionStore = useCollectionStore()
-const {toggleEditCollectionModal, selectedCollection} = storeToRefs(collectionStore)
+const {selectedCollection} = storeToRefs(collectionStore)
 const {editCollection} = collectionStore
 
 const openAccountsDropdown = ref(false)
@@ -31,12 +31,17 @@ const formIsChanged = computed(() => {
         return field[1] !== form.selectedAccounts[field[0] as keyof object]
     }) || nameChanged
 })
+
+const editForm = () => {
+    editCollection(form)
+    navigateTo('/collections', {replace: true})
+}
 </script>
 
 <template>
     <div>
         <h3 class="block font-medium text-gray-700 pb-2">Edit Collection</h3>
-
+        
         <div class="font-medium text-gray-700 text-xs flex items-center justify-between gap-3 ring ring-slate-400 rounded-md mb-2">
             <div class="flex items-center justify-stretch gap-2">
                 <p class="uppercase px-3 py-2 bg-slate-200 rounded-l-md">Collection Name:</p>
@@ -58,8 +63,8 @@ const formIsChanged = computed(() => {
                 <span class="text-sm">Add to Favorites</span>
             </div>
             <div class="space-x-2">
-                <button @click="toggleEditCollectionModal = false" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
-                <button v-if="formIsChanged" @click="editCollection(form)" class="ring px-5 py-1 bg-green-300 hover:bg-green-300 ring-slate-300 rounded-md">SAVE</button>
+                <button @click="navigateTo('/collections', {replace: true})" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
+                <button v-if="formIsChanged" @click="editForm" class="ring px-5 py-1 bg-green-300 hover:bg-green-300 ring-slate-300 rounded-md">SAVE</button>
             </div>
         </div>
     </div>

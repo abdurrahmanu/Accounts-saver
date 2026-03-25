@@ -1,6 +1,3 @@
 <template>
-    <div>
-      <SearchAndFilters />
-      <AccountList />
-    </div>
+  <div></div>
 </template>

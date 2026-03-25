@@ -14,16 +14,16 @@ export interface Account {
 
 export const useAccountStore = defineStore('accountStore', () => {
   const route = useRoute()
+
+  const menuToggleElement = ref<HTMLElement | null>(null)
+
   const collectionStore = useCollectionStore()
-  const {collections, filteredCollections} = storeToRefs(collectionStore)
-  const {createCollection} = collectionStore
-
   const selectStore = useSelectStore()
-  const {selectedList} = storeToRefs(selectStore)
-
   const currentCollection = computed(() => collectionStore.currentCollection)
   const view = computed(() => collectionStore.view)
   
+  const sortAccounts = ref(false)
+  const selectedItemFor_route = ref<Account | null>(null)
   const singleDelete = ref('')
   const singleEdit = ref('')
   const seeMore = ref('')
@@ -34,6 +34,7 @@ export const useAccountStore = defineStore('accountStore', () => {
   const selectedBank = ref('all')
   const toggleDeleteAccountModal = ref(false)
   const openAccountsDropdown = ref(false)
+  const singleSelectedId = ref('')
 
   if (import.meta.client) {
     const saved = localStorage.getItem('my-saved-accounts')
@@ -64,8 +65,8 @@ export const useAccountStore = defineStore('accountStore', () => {
     }    
 
     // Create New Collection
-    if (account.collection && !collections.value.includes(account.collection)) {      
-      createCollection({name: account.collection.toLowerCase(), selectedAccounts: {[id as keyof object]: true}})
+    if (account.collection && !collectionStore.collections.includes(account.collection)) {      
+      collectionStore.createCollection({name: account.collection.toLowerCase(), selectedAccounts: {[id as keyof object]: true}})
     }
   }
 
@@ -88,7 +89,6 @@ export const useAccountStore = defineStore('accountStore', () => {
      }
 
     toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value
-    singleDelete.value = ''
   }
 
   // Getters
@@ -139,7 +139,7 @@ export const useAccountStore = defineStore('accountStore', () => {
       let store: string[] = []
       
       if (selectedBank.value === 'all') {
-        store = collections.value        
+        store = collectionStore.collections        
       } else if (selectedBank.value === 'favourites') {
         store = accounts.value.filter(acc => acc.collection.length && acc.favourite === true).map(acc => acc.collection)
       } else {
@@ -147,7 +147,7 @@ export const useAccountStore = defineStore('accountStore', () => {
       }
 
       store = [...new Set(store)]
-      filteredCollections.value = store
+      collectionStore.filteredCollections = store
     }
     
     // Convert to an array of objects
@@ -155,7 +155,7 @@ export const useAccountStore = defineStore('accountStore', () => {
   })
   
   const toggleFav = (id?: string) => {        
-    if (selectedList.value.length > 1) {
+    if (selectStore.selectedList.length > 1) {
       accounts.value = accounts.value.map(account => {
         if (id === account.id) {
           let isFavourite = !!account.favourite
@@ -168,7 +168,7 @@ export const useAccountStore = defineStore('accountStore', () => {
       })    
     } else {
       accounts.value = accounts.value.map(account => {
-        if (selectedList.value.includes(account.id)) {
+        if (selectStore.selectedList.includes(account.id)) {
           let isFavourite = !!account.favourite
           return {
             ...account,
@@ -182,14 +182,18 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   return { 
     toggleDeleteAccountModal,
+    selectedItemFor_route,
+    sortAccounts,
     accounts, 
     searchQuery, 
     selectedBank, 
     uniqueBanks, 
     seeMore,
     singleDelete,
+    singleSelectedId,
     singleEdit,
     addNewAccount,
+    menuToggleElement,
     toggleFav,
     toggleEditAccountModal,
     openAccountsDropdown,

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showAccountsList">
+  <div v-if="showAccountsList" class="flex flex-col flex-1 overflow-auto">
     <div v-if="filteredAndCategorizedAccounts.length || isCollection" class="flex justify-between items-center py-5">
       <div class="flex gap-3 px-2 text-xs">
         <SvgBack v-if="route.fullPath.includes('collections')" @click="$router.back" class="w-5" />
@@ -18,7 +18,7 @@
       <p>Add some accounts</p>
     </div>
     
-    <div class="overflow-y-scroll">
+    <div class="pb-20 overflow-y-scroll flex-1">
       <div v-for="category in filteredAndCategorizedAccounts" :key="category.bankName" class="bg-white">
         <AccountItem 
         v-for="account in category.accounts" 
@@ -33,7 +33,7 @@
 const route = useRoute()
 
 const accountStore = useAccountStore()
-const {selectedBank, accounts, filteredAndCategorizedAccounts } = storeToRefs(accountStore)
+const {selectedBank, accounts, filteredAndCategorizedAccounts, singleSelectedId } = storeToRefs(accountStore)
 
 const collections = useCollectionStore()
 const {isCollection, currentCollection } = storeToRefs(collections)
@@ -49,6 +49,11 @@ const numberOfAccountsInList = computed(() => {
 })
 
 const showAccountsList = computed(() => {
-  return route.name === 'accounts' || route.fullPath.includes('/collections/_/')
-})
+  return (
+    route.name === 'accounts' ||
+    route.fullPath === `/accounts/_/${singleSelectedId.value}` ||
+     route.fullPath.includes('/collections/_/') ||
+      route.fullPath.includes('/accounts/_')
+  )
+}) 
 </script>

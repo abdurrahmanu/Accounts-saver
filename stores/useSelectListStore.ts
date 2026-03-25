@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useSelectStore = defineStore('selectList', () => {
+  const router = useRouter()
   const collectionStore = useCollectionStore()
   const accountStore = useAccountStore()
   const ongoingSelection = ref(false)
@@ -38,7 +39,7 @@ export const useSelectStore = defineStore('selectList', () => {
   const stop = (event: Event, id: string) => {
     if (selectedList.value.length) return
     if (activateTimer.value) {
-      if(collectionStore.view === 'collections' && !ongoingSelection.value && !collectionStore.isCollection) {
+      if(collectionStore.view === 'collections' && !ongoingSelection.value && !collectionStore.isCollection) {        
         collectionStore.openCollection(id)          
       }
       clearTimeout(activateTimer.value)
@@ -52,8 +53,7 @@ export const useSelectStore = defineStore('selectList', () => {
           selectedList.value.push(acc.id)
         }
       })
-    } 
-    
+    }  
     else {      
       collectionStore.collections.forEach(col => {
         if (!selectedList.value.includes(col)) {
@@ -61,7 +61,6 @@ export const useSelectStore = defineStore('selectList', () => {
         }
       })
     }
-
     allSelected.value = true
   }
 

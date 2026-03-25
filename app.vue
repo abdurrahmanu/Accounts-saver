@@ -1,37 +1,29 @@
 <template>
-  <div class="select-none selection:bg-none">
+  <div class="relative overflow-y-hidden select-none selection:bg-none max-w-140 mx-auto ring max-h-screen min-h-screen ring-slate-200">
     <NuxtPwaManifest />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-
     <ToolBar />
-    
-    <AppModal :toggle="toggleEditAccountModal">
-      <EditAccount :account="editingAccount"  />
-    </AppModal>
-    
-    <AppModal :toggle="toggleEditCollectionModal">
-      <EditCollection />
-    </AppModal>
-
-    <AppModal :toggle="toggleDeleteAccountModal">
-      <PopUp/>
-    </AppModal>
   </div>
 </template>
 
 <script setup lang="ts">
-const accountStore = useAccountStore()
-const { accounts, toggleEditAccountModal, toggleDeleteAccountModal} = storeToRefs(accountStore)
-
-const collectionStore = useCollectionStore()
-const {toggleEditCollectionModal} = storeToRefs(collectionStore)
+const route = useRoute()
 
 const selectStore = useSelectStore()
-const {selectedList} = storeToRefs(selectStore)
+const {selectedList, ongoingSelection} = storeToRefs(selectStore)
 
-const editingAccount = computed(() => {
-    return accounts.value.filter(account => account.id === selectedList.value[0])[0]
+onMounted(() => {
+  if (route.fullPath !== '/accounts' && route.fullPath !== '/collections' && route.fullPath !== '/accounts/' && route.fullPath !== '/collections/') {    
+    navigateTo('/accounts', {replace: true})
+  }
+})
+
+watch(() => route.fullPath, (oldVal, newVal) => {
+  if (['/accounts', '/accounts/'].includes(route.fullPath)) {
+    selectedList.value = []
+    ongoingSelection.value = false
+  }
 })
 </script>

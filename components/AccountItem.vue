@@ -46,51 +46,48 @@
         </div>
 
         <div v-if="multiSelect" class="rounded-md flex items-center">
-          <div ref="menuToggleElement" @click="asyncWaitFunc" :class="[toggleMenu ? 'hover:bg-red-200' : 'hover:bg-black/20']" class="p-1 rounded-md flex items-center">
+          <div ref="menuToggleElement" @click="toggleRoute" :class="[toggleMenu ? 'hover:bg-red-200' : 'hover:bg-black/20']" class="p-1 rounded-md flex items-center">
             <SvgCancel v-if="toggleMenu" class="w-5" />
             <SvgMore v-else class="w-5" />
           </div>
         </div>
-        
-        <div ref="menuElement" id="value" v-if="toggleMenu" class="absolute -bottom-12 ring ring-slate-400 z-2 right-1 rounded-md bg-slate-200">
-          <div class="flex gap-2 p-2 justify-center">
-          <div @click="toggleFav(account.id)" class="p-1 rounded-md hover:bg-green-300/30 px-1 flex items-center">
-            <SvgFav v-if="account.favourite" class="w-5"/>
-            <SvgUnfav v-else class="w-5"/>
-          </div>  
-            <div @click="delAccount(account.id)" class="p-1 rounded-md hover:bg-red-600/20 px-1 flex items-center w-fit">
-              <SvgDelete class="w-5"/>
-            </div>
-            <div @click="editAccount(account.id)" class="rounded-md hover:bg-black/20 p-1 flex items-center w-fit">
-              <SvgEdit class="w-5"/>
-            </div>
-          </div>
-      </div>
+
+        <div v-if="route.fullPath === `/accounts/_/${account.id}`">
+          <AccountItemPopUp />
+        </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
+const router = useRouter()
+const itemId = computed(() => route.params.id)
+const currentSelection = ref(false)
+
 const selectStore = useSelectStore()
-const {selectedList, ongoingSelection} = storeToRefs(selectStore)
+const {selectedList, ongoingSelection, } = storeToRefs(selectStore)
 const {start, stop} = selectStore
 
 const accountStore = useAccountStore()
-const {selectedBank, singleEdit, toggleEditAccountModal, seeMore, toggleDeleteAccountModal, singleDelete} = storeToRefs(accountStore)
-const {toggleFav} = accountStore
+const {selectedBank, seeMore, selectedItemFor_route } = storeToRefs(accountStore)
 
-const menuElement = ref<HTMLElement | null>(null)
-const menuToggleElement = ref<HTMLElement | null>(null)
-
-const toggleMenu = ref(false)
-
-const emit = defineEmits<{
-  accountID: [id: string]
-}>()
+const toggleMenu = computed(() => {
+  if (typeof route.fullPath === 'string') return route.fullPath === `/accounts/_/${props.account.id}`
+  else return false
+})
 
 const props = defineProps<{
   account: Account,
 }>()
+
+const isItemId = computed(() => itemId.value === props.account.id)
+
+watch(toggleMenu, (newVal, oldVal) => {
+  if (newVal === true) {
+    selectedItemFor_route.value = props.account
+  } else selectedItemFor_route.value = null
+})
 
 const copied = ref(false)
 
@@ -110,36 +107,17 @@ const multiSelect = computed(() => {
   return selectedList.value.length && selectedList.value.includes(props.account.id)
 })
 
-const editAccount = (id: string) => {
-  singleEdit.value = id
-  toggleEditAccountModal.value = !toggleEditAccountModal.value      
-}
+const toggleSeeMore = (id: string) => seeMore.value === id ? seeMore.value = '' : seeMore.value = id
 
-const delAccount = (id: string) => {  
-  singleDelete.value = id
-  toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value  
-}  
-
-const toggleSeeMore = (id: string) => {  
-  if (seeMore.value === id) seeMore.value = ''
-  else seeMore.value = id
-}
-
-const asyncWaitFunc = async () => {
-  setTimeout(() => {
-    toggleMenu.value = !toggleMenu.value
-  }, 0);
-}
-
-const menuClick = (event: Event) => {      
-  const target = event.target
-  const el = menuElement.value
-
-  if (toggleMenu.value) {    
-    if (el instanceof HTMLElement && (target !== menuToggleElement.value && !menuToggleElement.value?.contains(target as ChildNode)) && !(el === target || el.contains(target as Node) || event.composedPath().includes(el))) {
-        toggleMenu.value = false
-      }
-  }
+const toggleRoute = async () => {
+    if (route.fullPath === `/accounts/_/${props.account.id}`) {
+      currentSelection.value = false
+      navigateTo('/accounts/_', {replace: true})
+    }
+    else {
+      currentSelection.value = true
+      navigateTo(`/accounts/_/${props.account.id}`)      
+    }
 }
 
 const nameInitials = computed(() => {
@@ -154,9 +132,7 @@ const nameInitials = computed(() => {
   return initials
 })
 
-window.addEventListener('click', menuClick)
-
-onUnmounted(() => {
-  window.removeEventListener('click', menuClick)
+watch(ongoingSelection, newVal => {
+  
 })
 </script>

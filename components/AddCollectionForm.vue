@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 const accountsCollection = useCollectionStore()
-const {toggleCollectionForm} = storeToRefs(accountsCollection)
 const {createCollection} = accountsCollection
 
 const accountStore = useAccountStore()

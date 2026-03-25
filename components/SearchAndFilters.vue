@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-zinc-200 p-2 py-3 gap-2 max-w-150 mx-auto items-center relative">
+  <div class="bg-zinc-200 p-2 py-3 gap-2 max-w-150 mx-auto items-center relative h-fit">
     <div class="space-y-3">
       <div class="flex-1 relative flex items-center">
         <SvgSearch class="w-5 absolute right-2" />

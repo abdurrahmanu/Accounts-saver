@@ -32,7 +32,7 @@ const editCollection = () => {
 </script>
 
 <template>
-  <NuxtLink :to="`/collections/_/${collection}`">
+  <NuxtLink :to="!ongoingSelection ? `/collections/_/${collection}` : undefined" >
     <div
     @pointerdown="selectMode.start($event, collection)" 
     @pointerup="selectMode.stop($event, collection)" 

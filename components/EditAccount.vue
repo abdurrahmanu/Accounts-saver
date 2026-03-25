@@ -20,7 +20,7 @@
                 <span class="text-sm">Add to Favorites</span>
             </div>
             <div class="space-x-2">
-                <button @click="toggleEditAccountModal = false" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
+                <button @click="navigateTo('/accounts/_', {replace: true})" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
                 <button v-if="formIsChanged" type="submit" class="ring px-5 py-1 bg-green-300 hover:bg-green-300 ring-slate-300 rounded-md">SAVE</button>
             </div>
         </form>
@@ -28,8 +28,10 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter()
+
 const accountStore = useAccountStore()
-const {toggleEditAccountModal, singleEdit, accounts} = storeToRefs(accountStore)
+const {singleEdit, accounts} = storeToRefs(accountStore)
 const {addAccount} = accountStore
 
 interface FormFieldInterface {
@@ -96,7 +98,7 @@ const editAccount = () => {
         selected: false,
     }, account.id)
 
-    toggleEditAccountModal.value = false        
+    navigateTo('/accounts/_', {replace: true})
 }
 
 const formIsChanged = computed(() => {
