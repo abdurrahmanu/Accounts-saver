@@ -2,8 +2,8 @@
   <div v-if="showAccountsList">
     <div v-if="filteredAndCategorizedAccounts.length || isCollection" class="flex justify-between items-center py-5">
       <div class="flex gap-3 px-2 text-xs">
-        <SvgBack v-if="view === 'collections'" @click="isCollection = false" class="w-5" />
-        <h3 v-if="isCollection && view === 'collections'" class="uppercase font-bold  px-2 py-1 bg-slate-200 rounded-md">{{ currentCollection }}</h3>
+        <SvgBack v-if="route.fullPath.includes('collections')" @click="$router.back" class="w-5" />
+        <h3 v-if="route.fullPath.includes('collections')" class="uppercase font-bold  px-2 py-1 bg-slate-200 rounded-md">{{ currentCollection }}</h3>
         <p v-else class="font-bold px-2 py-1 bg-slate-200 rounded-md">ACCOUNTS</p>
       </div>
       <p v-if="accounts.length" class="uppercase mr-2 ring ring-slate-300 flex items-center gap-1 px-1 py-0.5 bg-slate-200 rounded-md font-medium">
@@ -14,7 +14,7 @@
     
     <div v-if="filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-3 bg-white">
       <SvgBox class="w-30 -mb-10 mx-auto" />
-      No accounts found. 
+      No accounts  found. 
       <p>Add some accounts</p>
     </div>
     
@@ -27,18 +27,16 @@
       </div>
     </div>
   </div>  
-
-  <AppModal :toggle="toggleDeleteAccountModal">
-    <PopUp/>
-  </AppModal>
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
+
 const accountStore = useAccountStore()
-const {selectedBank, accounts, filteredAndCategorizedAccounts, toggleDeleteAccountModal} = storeToRefs(accountStore)
+const {selectedBank, accounts, filteredAndCategorizedAccounts } = storeToRefs(accountStore)
 
 const collections = useCollectionStore()
-const {isCollection, currentCollection, view, showAccountsList} = storeToRefs(collections)
+const {isCollection, currentCollection } = storeToRefs(collections)
 
 const numberOfAccountsInList = computed(() => {
   let allAccounts = []
@@ -48,5 +46,9 @@ const numberOfAccountsInList = computed(() => {
   });
 
   return allAccounts.length
+})
+
+const showAccountsList = computed(() => {
+  return route.name === 'accounts' || route.fullPath.includes('/collections/_/')
 })
 </script>

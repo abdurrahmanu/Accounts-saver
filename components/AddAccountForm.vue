@@ -1,14 +1,14 @@
 <template>
-    <div v-if="addNewAccount" class="max-w-160 bg-white px-6 py-2">
+    <div class="max-w-160 bg-white px-6 py-2">
       <div class="flex justify-between items-center py-2">
         <h2 class="py-2 text-xl font-bold text-gray-800">{{ formType === 'form' ? 'Add Account' : 'Import Account' }}</h2>
-        <div class="text-xs relative h-6 ring-gray-300 flex">
+        <div class="text-xs cursor-pointer relative h-6 ring-gray-300 flex">
             <div :class="{'bg-green-300' : formType === 'form'}" @click="formType='form'" class="w-fit px-5 py-1 border border-slate-300">FORM</div>
             <div :class="{'bg-green-300' : formType === 'json'}" @click="formType='json'" class="w-fit px-5 py-1 border border-slate-300 border-l-0">JSON</div>
         </div>
       </div>
       
-    <div v-if="addNewAccount" >
+    <div >
       <div v-if="formType === 'form'">
         <form @submit.prevent="submitForm" class="space-y-4">
           <div>
@@ -89,7 +89,7 @@ const successMessage = ref(false)
 const errorMessage = ref(false)
 
 const accountStore = useAccountStore()
-const {addNewAccount, accounts} = storeToRefs(accountStore)
+const {accounts} = storeToRefs(accountStore)
 const {addAccount} = accountStore
 
 const focusContainer = ref<HTMLElement | null>(null)

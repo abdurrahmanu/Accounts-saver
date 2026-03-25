@@ -1,20 +1,53 @@
 <script lang="ts" setup>
-const accountsCollection = useCollectionStore()
-const {view} = storeToRefs(accountsCollection)
+const route = useRoute()
+const router = useRouter()
+
+const awaitNavigationAPI = ref(false)
 
 const listStore = useSelectStore()
 const {cancel} = listStore
 
-const changeView = (collection: 'bank' | 'collections') => {
-    view.value = collection
+const switchTab = async (path: string) => {
     cancel()
+        
+    if (path === 'col' && route.fullPath.includes('/accounts')) {                
+        if (route.fullPath === '/accounts') {     
+            navigateTo('/collections', {replace: true})
+        }
+    }
+    
+    else if (path === 'acc' && route.fullPath.includes('/collections')) {
+        if (route.fullPath === '/collections') {
+            navigateTo('/accounts', {replace: true})
+        }
+
+        else if (route.fullPath.includes('/collections/_')) {        
+            router.go(-1)
+            awaitNavigationAPI.value = true
+        }
+    }
 }
+
+watch(() => route.fullPath, (newVal, oldval) => {
+    if (newVal === '/collections' && awaitNavigationAPI.value) {        
+        navigateTo('/accounts', {replace: true})
+        awaitNavigationAPI.value = false
+    }
+})
 </script>
 
 <template>
-    <ul class="text-[10px] text-center space-y-1 transition-all duration-200 w-[30%]">
-        <li :class="[view === 'collections' ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']" @click="changeView('collections')" class="rounded-lg flex-1 flex items-center gap-1 whitespace-nowrap border-r border border-slate-400 p-2 px-1 hover:bg-green-200"><SvgGrid class="w-4"/> COLLECTIONS</li>
+    <ul class="text-[10px] text-center space-y-1 transition-all duration-200 w-[30%]">  
+        <li @click="switchTab('col')" :class="[route.name?.toString().includes('collections') ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']" class="list-item"><SvgGrid class="w-4"/> COLLECTIONS</li>
 
-        <li :class="[view === 'bank' ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']"  @click="changeView('bank')" class="rounded-lg flex-1 flex items-center gap-1 whitespace p-1 px-1 border border-slate-400  hover:bg-green-200"><SvgBank class="w-6"/>ACCOUNTS</li>
+        <li @click="switchTab('acc')" :class="[route.name?.toString().includes('accounts') ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']" class="list-item"><SvgBank class="w-6"/>ACCOUNTS</li>
     </ul>
 </template>
+
+<style scoped>
+@reference "tailwindcss";
+
+.list-item {
+    @apply rounded-lg flex-1 flex items-center gap-1 border border-slate-400 p-2 px-1 hover:bg-green-200
+}
+</style>

@@ -40,7 +40,7 @@ const submitForm = () => {
 
 <template>
     <div class="py-3">        
-        <form v-if="toggleCollectionForm" @submit.prevent="submitForm" class="space-y-3 max-w-120 w-[80%] mx-auto">
+        <form @submit.prevent="submitForm" class="space-y-3 max-w-120 w-[80%] mx-auto">
             <div>
                 <h3 class="font-bold">New Collection</h3>
             </div>

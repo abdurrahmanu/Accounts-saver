@@ -32,7 +32,8 @@ const editCollection = () => {
 </script>
 
 <template>
-  <div
+  <NuxtLink :to="`/collections/_/${collection}`">
+    <div
     @pointerdown="selectMode.start($event, collection)" 
     @pointerup="selectMode.stop($event, collection)" 
     @pointercancel="selectMode.stop($event, collection)"
@@ -48,5 +49,6 @@ const editCollection = () => {
         <p class="text-xs py-2">{{ numberOfAccountsInCollectionFilter ? numberOfAccountsInCollectionFilter + ' accounts' : '' }}</p>
       </div>
       <SvgEdit @pointerdown.stop @pointerup.stop @pointercancel.stop @click.stop="editCollection" v-if='selectedList.includes(collection)' class="w-6 absolute bottom-2 right-2" />
-  </div>
+    </div>
+  </NuxtLink>
   </template>

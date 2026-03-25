@@ -1,1 +1,7 @@
 @import "tailwindcss"
+
+/* @layer {
+    .list-item {
+        @apply w-fit h-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer py-0.5 whitespace-nowrap text-xs ring-1 rounded-md
+    }
+} */

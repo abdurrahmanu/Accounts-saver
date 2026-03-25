@@ -13,6 +13,7 @@ export interface Account {
 }
 
 export const useAccountStore = defineStore('accountStore', () => {
+  const route = useRoute()
   const collectionStore = useCollectionStore()
   const {collections, filteredCollections} = storeToRefs(collectionStore)
   const {createCollection} = collectionStore
@@ -109,7 +110,7 @@ export const useAccountStore = defineStore('accountStore', () => {
       )
     }    
 
-    if (view.value === 'collections') {
+    if (route.fullPath.includes('collections')) {
       result = result.filter(account => account.collection === currentCollection.value)
     }
     
@@ -134,7 +135,7 @@ export const useAccountStore = defineStore('accountStore', () => {
       accounts: grouped[bank]
     }))
 
-    if (view.value === 'collections') {
+    if (route.fullPath.includes('collections')) {
       let store: string[] = []
       
       if (selectedBank.value === 'all') {

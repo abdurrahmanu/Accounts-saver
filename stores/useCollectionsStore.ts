@@ -30,7 +30,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
 
   const openCollection = (collection: string) => {    
     currentCollection.value = collection
-    isCollection.value = true
+    isCollection.value = true    
   }
 
   // Watch for changes and save to LocalStorage automatically

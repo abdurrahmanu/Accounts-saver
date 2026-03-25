@@ -1,5 +1,5 @@
-<template>
-  <header class="sm:text-left py-5 shadow px-2 fixed top-0 w-full bg-white h-23 z-3 flex items-center justify-between">
+ <template>
+  <header class="sm:text-left py-5 shadow px-2 w-full bg-white flex items-center justify-between">
     <div>
       <div class="flex items-center gap-1 top-1 text-xs font-bold">
         <SvgLogo class="w-10 rotate-12 relative -top-1"/>
@@ -9,32 +9,61 @@
         </div>
       </div>
     </div>
-    <div>
-      <button v-if="view === 'bank'" @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
-        {{ addNewAccount ? 'Close Form' : 'Add Account' }}
-        <div>
-          <SvgPlus v-if="!addNewAccount" class="w-4"/>
-          <SvgMinus v-else class="w-4"/>
-        </div>
-      </button>
 
-      <button v-if="view === 'collections'" @click="toggleAddCollectionForm" class="text-xs px-2 py-1 hover:slate-300 cursor-pointer ring ring-slate-400 flex items-center gap-2 rounded-md">
-          {{ toggleCollectionForm ? 'Close Form' : 'Add Collection' }} 
+    <div v-if="route.fullPath === '/accounts/addAccount'">
+      <NuxtLink to="/accounts">
+        <button @click="$router.back(), toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
+          Close Form
           <div>
-              <SvgPlus v-if="!toggleCollectionForm" class="w-4"/>
-              <SvgMinus v-else class="w-4"/>
+            <SvgMinus class="w-4"/>
           </div>
       </button>
+    </NuxtLink>
+    </div>
+
+    <div v-if="route.fullPath === '/accounts'">
+      <NuxtLink to="/accounts/addAccount">
+        <button @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
+          Add Account
+          <div>
+            <SvgPlus class="w-4"/>
+          </div>
+        </button>
+      </NuxtLink>
+    </div>
+
+    <div v-if="route.fullPath.includes('/collections') && !route.fullPath.includes('addCollection')">
+      <NuxtLink to="/collections/addCollection">
+        <button @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
+          Add Collection
+          <div>
+            <SvgPlus class="w-4"/>
+          </div>
+        </button>
+      </NuxtLink>
+    </div>
+      
+    <div v-if="route.fullPath === '/collections/addCollection'">
+      <NuxtLink to="/collections">
+        <button @click="$router.back(), toggleAddCollectionForm" class="text-xs px-2 py-1 hover:slate-300 cursor-pointer ring ring-slate-400 flex items-center gap-2 rounded-md">
+            Close Form
+            <div>
+                <SvgMinus class="w-4"/>
+            </div>
+          </button>
+      </NuxtLink>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
+
 const accountStore = useAccountStore()
 const {addNewAccount} = storeToRefs(accountStore)
 
 const collectionStore = useCollectionStore()
-const {toggleCollectionForm, view} = storeToRefs(collectionStore)
+const {toggleCollectionForm} = storeToRefs(collectionStore)
 
 const selectStore = useSelectStore()
 const {cancel} = selectStore
