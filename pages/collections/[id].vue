@@ -1,10 +1,15 @@
 <script setup lang="ts">
 const route = useRoute()
+
 const accountstore = useAccountStore()
 const {accounts, selectedBank, searchQuery} = storeToRefs(accountstore)
 
+const accountsInCollection = computed(() => {
+    return accounts.value.filter(account => account.collection === route.params.id)
+})
+
 const accountsToShow = computed<Account[]>(() => {
-    let result: Account[] = accounts.value
+    let result: Account[] = accountsInCollection.value
 
     if (searchQuery.value) {        
       const q = searchQuery.value.toLowerCase()
@@ -27,6 +32,34 @@ const accountsToShow = computed<Account[]>(() => {
 </script>
 
 <template>
-    <AccountList v-if="!route.fullPath.includes('/addAccount')" :accounts_="accountsToShow" />
-    <NuxtPage />
+    <div>
+        <AccountList :accounts_="accountsToShow" />
+        <NuxtPage />
+    </div>
 </template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

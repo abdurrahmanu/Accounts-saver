@@ -1,3 +1,3 @@
 <template>
-    <AccountList />
+    <ToolBar />
 </template>

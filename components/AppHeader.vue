@@ -11,47 +11,39 @@
     </div>
 
     <div v-if="route.fullPath === '/accounts/addAccount'">
-      <NuxtLink to="/accounts">
-        <button @click="$router.back(), toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
+        <button @click="navigateTo('/accounts')" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
           Close Form
           <div>
             <SvgMinus class="w-4"/>
           </div>
       </button>
-    </NuxtLink>
     </div>
 
     <div v-if="route.fullPath.includes('accounts') && !route.fullPath.includes('/addAccount')">
-      <NuxtLink to="/accounts/addAccount">
-        <button @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
+        <button @click="addAccountFn" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
           Add Account
           <div>
             <SvgPlus class="w-4"/>
           </div>
         </button>
-      </NuxtLink>
     </div>
 
     <div v-if="route.fullPath.includes('/collections') && !route.fullPath.includes('addCollection')">
-      <NuxtLink to="/collections/addCollection">
-        <button @click="toggleAddAccountForm" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
+        <button @click="addCollectionFn" class="text-xs ring-slate-400 cursor-pointer flex items-center gap-2 justify-self-end ring rounded-md hover:bg-slate-200 w-fit px-2 h-fit py-1">
           Add Collection
           <div>
             <SvgPlus class="w-4"/>
           </div>
         </button>
-      </NuxtLink>
     </div>
       
     <div v-if="route.fullPath === '/collections/addCollection'">
-      <NuxtLink to="/collections">
-        <button @click="$router.back(), toggleAddCollectionForm" class="text-xs px-2 py-1 hover:slate-300 cursor-pointer ring ring-slate-400 flex items-center gap-2 rounded-md">
+        <button @click="navigateTo('/collections')" class="text-xs px-2 py-1 hover:slate-300 cursor-pointer ring ring-slate-400 flex items-center gap-2 rounded-md">
             Close Form
             <div>
-                <SvgMinus class="w-4"/>
-            </div>
-          </button>
-      </NuxtLink>
+              <SvgMinus class="w-4"/>
+          </div>
+        </button>
     </div>
   </header>
 </template>
@@ -59,24 +51,11 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const accountStore = useAccountStore()
-const {addNewAccount} = storeToRefs(accountStore)
-
-const collectionStore = useCollectionStore()
-const {toggleCollectionForm} = storeToRefs(collectionStore)
-
-const selectStore = useSelectStore()
-const {cancel} = selectStore
-
-const toggleAddAccountForm = () => {
-  cancel()
-  addNewAccount.value = !addNewAccount.value
-  toggleCollectionForm.value = false
+const addAccountFn = () => {
+  navigateTo('/accounts/addAccount')
 }
 
-const toggleAddCollectionForm = () => {
-  cancel()
-  toggleCollectionForm.value = !toggleCollectionForm.value
-  addNewAccount.value = false
+const addCollectionFn = () => {
+  navigateTo('/collections/addCollection')
 }
 </script>

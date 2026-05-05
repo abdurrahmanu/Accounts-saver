@@ -12,7 +12,7 @@ const {selectedList} = storeToRefs(selectStore)
 
 const correctPath = computed(() => {    
     if (route.fullPath.length && selectedList.value.length) {
-        return route.fullPath === `/accounts/_/delete`
+        return route.fullPath === `/collections/${route.params.id}/_/${route.params.id_}/delete`
     }
     else return false
 }) 

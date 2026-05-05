@@ -1,29 +1,26 @@
 <template>
-  <div v-if="showAccountsList" class="flex flex-col flex-1 overflow-auto">
-    <div v-if="filteredAndCategorizedAccounts.length || isCollection" class="flex justify-between items-center py-5">
+  <div class="flex flex-col flex-1 overflow-auto">
+    <div class="flex justify-between items-center py-5">
       <div class="flex gap-3 px-2 text-xs">
         <SvgBack v-if="route.fullPath.includes('collections')" @click="$router.back" class="w-5" />
-        <h3 v-if="route.fullPath.includes('collections')" class="uppercase font-bold  px-2 py-1 bg-slate-200 rounded-md">{{ currentCollection }}</h3>
+        <h3 v-if="route.fullPath.includes('collections')" class="uppercase font-bold  px-2 py-1 bg-slate-200 rounded-md">{{ route.params.id }}</h3>
         <p v-else class="font-bold px-2 py-1 bg-slate-200 rounded-md">ACCOUNTS</p>
       </div>
-      <p v-if="accounts.length" class="uppercase mr-2 ring ring-slate-300 flex items-center gap-1 px-1 py-0.5 bg-slate-200 rounded-md font-medium">
+      <p v-if="accounts_?.length" class="uppercase mr-2 ring ring-slate-300 flex items-center gap-1 px-1 py-0.5 bg-slate-200 rounded-md font-medium">
         <span class="pl-1 text-xs">{{ selectedBank }}</span>
-        <span class="font-bold font-mono">[{{ numberOfAccountsInList }}]</span>
+        <span class="font-bold font-mono">[{{ accounts_?.length }}]</span>
       </p>
     </div>
     
-    <div v-if="filteredAndCategorizedAccounts.length === 0" class="text-center text-gray-500 py-3 bg-white">
+    <div v-if="accounts_?.length === 0" class="text-center text-gray-500 py-3 bg-white">
       <SvgBox class="w-30 -mb-10 mx-auto" />
       No accounts  found. 
       <p>Add some accounts</p>
     </div>
     
-    <div class="pb-20 overflow-y-scroll flex-1">
-      <div v-for="category in filteredAndCategorizedAccounts" :key="category.bankName" class="bg-white">
-        <AccountItem 
-        v-for="account in category.accounts" 
-        :key="account.id" 
-        :account="account" />
+    <div v-if="accounts_?.length" class="overflow-y-scroll flex-1 pb-20">
+      <div v-for="acc in accounts_" :key="acc.id" class="bg-white">
+        <AccountItem :account="acc" />
       </div>
     </div>
   </div>  
@@ -32,28 +29,34 @@
 <script setup lang="ts">
 const route = useRoute()
 
+const props = defineProps<{
+  accounts_?: Account[]
+}>()
+
 const accountStore = useAccountStore()
-const {selectedBank, accounts, filteredAndCategorizedAccounts, singleSelectedId } = storeToRefs(accountStore)
+const {selectedBank} = storeToRefs(accountStore)
 
-const collections = useCollectionStore()
-const {isCollection, currentCollection } = storeToRefs(collections)
+const selectStore = useSelectStore()
+const { selectedList, selectAll } = storeToRefs(selectStore)
 
-const numberOfAccountsInList = computed(() => {
-  let allAccounts = []
-
-  filteredAndCategorizedAccounts.value.forEach(acc => {
-    allAccounts.push(...acc.accounts)
-  });
-
-  return allAccounts.length
+watch(selectAll, (newVal, oldVal) => {
+  if (newVal) {
+    return props.accounts_?.forEach(acc => {
+      if (selectedList.value.includes(acc.id)) return
+      selectedList.value.push(acc.id)
+    })
+  } else {
+    if (oldVal) {
+      selectedList.value = []
+    }
+  }
 })
 
-const showAccountsList = computed(() => {
-  return (
-    route.name === 'accounts' ||
-    route.fullPath === `/accounts/_/${singleSelectedId.value}` ||
-     route.fullPath.includes('/collections/_/') ||
-      route.fullPath.includes('/accounts/_')
-  )
-}) 
+watch(selectedList, newVal => {
+  if (newVal) {
+    if (newVal.length === props.accounts_?.length) {
+      selectAll.value = true
+    }
+  }
+})
 </script>

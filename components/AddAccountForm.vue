@@ -94,7 +94,7 @@ const {addAccount} = accountStore
 
 const focusContainer = ref<HTMLElement | null>(null)
 
-const handleFocusOut = (event: Event) => {
+const handleFocusOut = (event: FocusEvent) => {
   if (!focusContainer.value?.contains(event.relatedTarget as Node)) {
     showBanksList.value = false
   }

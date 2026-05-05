@@ -1,26 +1,12 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 const route = useRoute()
-
-const listStore = useSelectStore()
-const {cancel} = listStore
-
-const switchTab = async (path: string) => {
-    cancel()
-
-    if (path === 'col' && route.fullPath.includes('/accounts')) {        
-        navigateTo('/collections', {replace: true})                
-    }
-    
-    else if (path === 'acc' && route.fullPath.includes('/collections')) {
-        navigateTo('/accounts', {replace: true})
-    }
-}
+const switchTab = async (path: string) => navigateTo(path, {replace: true})
 </script>
 
 <template>
     <ul class="text-[10px] text-center space-y-1 transition-all duration-200 w-[30%]">  
-        <li @click="switchTab('col')" :class="[route.name?.toString().includes('collections') ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']" class="list-item"><SvgGrid class="w-4"/> COLLECTIONS</li>
-        <li @click="switchTab('acc')" :class="[route.name?.toString().includes('accounts') ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']" class="list-item"><SvgBank class="w-6"/>ACCOUNTS</li>
+        <li @click="switchTab('/collections')" :class="[route.name?.toString().includes('collections') ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']" class="list-item"><SvgGrid class="w-4"/> COLLECTIONS</li>
+        <li @click="switchTab('/accounts')" :class="[route.name?.toString().includes('accounts') ? 'bg-green-300 hover:bg-green-300 text-green-700' : 'bg-white']" class="list-item"><SvgBank class="w-6"/>ACCOUNTS</li>
     </ul>
 </template>
 

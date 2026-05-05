@@ -1,3 +1,5 @@
 <template>
-    <div></div>
+    <div>
+        <ToolBar />
+    </div>
 </template>

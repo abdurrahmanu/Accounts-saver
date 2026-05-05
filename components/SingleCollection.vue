@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 const accountsCollection = useCollectionStore()
-const { toggleEditCollectionModal, selectedCollection} = storeToRefs(accountsCollection)
 const {openCollection} = accountsCollection
+const { toggleEditCollectionModal, selectedCollection} = storeToRefs(accountsCollection)
 
 const selectMode = useSelectStore()
 const {selectedList, ongoingSelection} = storeToRefs(selectMode)
+const {start, stop, cancel} = selectMode
 
 const accountStore = useAccountStore()
 const {accounts, selectedBank} = storeToRefs(accountStore)
@@ -14,7 +15,6 @@ const props = defineProps<{
 }>()
 
 const numberOfAccountsInCollectionFilter = computed(() => {
-  // if real bank - check | if favourite - check | if all, show all collections
   return accounts.value.filter(account => {
     let conventionalBank = !['favourite', 'all'].includes(account.bank)
     
@@ -32,12 +32,11 @@ const editCollection = () => {
 </script>
 
 <template>
-  <NuxtLink :to="!ongoingSelection ? `/collections/_/${collection}` : undefined" >
+  <NuxtLink :to="!ongoingSelection ? `/collections/${collection}` : undefined" >
     <div
-    @pointerdown="selectMode.start($event, collection)" 
-    @pointerup="selectMode.stop($event, collection)" 
-    @pointercancel="selectMode.stop($event, collection)"
-    @click="!ongoingSelection && openCollection(collection)"
+    @pointerdown="start($event, collection)" 
+    @pointerup="stop($event, collection, true)" 
+    @pointercancel="stop($event, collection)"
     :class="{
       'bg-slate-200 hover:bg-slate-200': selectedList.includes(collection),
       'hover:bg-slate-100': !selectedList.includes(collection),
@@ -51,4 +50,4 @@ const editCollection = () => {
       <SvgEdit @pointerdown.stop @pointerup.stop @pointercancel.stop @click.stop="editCollection" v-if='selectedList.includes(collection)' class="w-6 absolute bottom-2 right-2" />
     </div>
   </NuxtLink>
-  </template>
+</template>

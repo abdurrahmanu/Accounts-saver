@@ -1,87 +1,129 @@
 <template>
-    <div class="relative flex justify-between">
-      <div :class="{
-        'bg-black/10 hover:bg-black/10': selectedList.includes(account.id),
-        'hover:bg-black/20': !selectedList.includes(account.id),
-        'border-l-green-500': account.favourite,
-        'border-l-transparent': !account.favourite
-      }"
-    @pointerdown="start($event, account.id)" 
-    @pointerup="stop($event, account.id)" 
-    @pointercancel="stop($event, account.id)"
-    class="text-xs border-y border-y-gray-300 transition flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-6">
-        <div class="flex gap-2 w-full py-2 px-4 pl-2 items-center">
-          <div class="flex items-center space-x-2">
-            <div v-if="ongoingSelection">
-              <SvgChecked v-if="selectedList.includes(account.id)" class="w-5" />
-              <SvgUnchecked v-else class="w-5" alt=""/>
+    <div class="relative flex justify-between bg-white group">
+      
+      <!-- LEFT SIDE: Main Pressable Content -->
+      <div 
+        :class="{
+          'bg-green-50/50 hover:bg-green-50': selectedList.includes(account.id),
+          'hover:bg-slate-50': !selectedList.includes(account.id),
+          'border-l-green-500': account.favourite,
+          'border-l-transparent': !account.favourite
+        }"
+        @pointerdown="start($event, account.id)" 
+        @pointerup="stop($event, account.id)" 
+        @pointercancel="stop($event, account.id)"
+        class="text-xs border-y border-y-slate-200 transition-colors flex-1 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative border-l-[6px] cursor-pointer"
+      >
+        <div class="flex gap-3 w-full p-3 pl-2 items-center">
+          
+          <!-- Selection & Avatar -->
+          <div class="flex items-center gap-3 shrink-0">
+            <div v-if="ongoingSelection" class="flex justify-center w-5">
+              <SvgChecked v-if="selectedList.includes(account.id)" class="w-5 text-green-600" />
+              <SvgUnchecked v-else class="w-5 text-slate-300" alt=""/>
             </div>
-            <div v-if="seeMore === account.id" class="rounded-full p-2 ring ring-green-500 flex">
-              <p v-for="(initial, index) in nameInitials" :key="index" class="text-2xl font-bold uppercase">{{ initial }}</p>
+            
+            <!-- Upgraded Avatar -->
+            <div class="w-11 h-11 rounded-full bg-green-100 border border-green-200 flex items-center justify-center shrink-0">
+              <p class="text-lg font-bold uppercase text-green-800 tracking-wide">
+                <span v-for="(initial, index) in nameInitials" :key="index">{{ initial }}</span>
+              </p>
             </div>
           </div>
-          <div class="space-y-1 w-full">
-            <h4 class="font-medium text-gray-800 uppercase">{{ account.name }} <span v-if="account.nickname" class="text-gray-500 font-normal text-sm">({{ account.nickname }})</span></h4>
-            <div class="flex gap-2 flex-wrap">
-              <p v-if="selectedBank === 'all' || seeMore === account.id" class="bg-gray-100 ring ring-black/20 w-fit p-1 rounded-md">{{ account.bank }}</p>
-              <p class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.accountNumber }}</p>
-              <div v-if="seeMore === account.id && (account.phoneNumber || account.collection)" class="space-x-2">
-                <p v-if="account.collection" class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.collection }}</p>
-                <p v-if="account.phoneNumber" class="text-gray-800 font-mono bg-gray-100 ring ring-black/20 inline-block px-2 py-1 rounded">{{ account.phoneNumber }}</p>
+          
+          <!-- Details & Descriptive Pills -->
+          <div class="space-y-1.5 w-full min-w-0">
+            
+            <!-- Name & Nickname -->
+            <h4 class="font-semibold text-slate-800 uppercase text-sm truncate">
+              {{ account.name }} 
+              <span v-if="account.nickname" class="text-slate-500 font-medium text-xs normal-case ml-1">
+                ({{ account.nickname }})
+              </span>
+            </h4>
+            
+            <!-- Labeled Data Pills Container -->
+            <div class="space-y-2">
+              <div class="flex gap-2 items-center">
+                <!-- Bank -->
+                <div v-if="selectedBank === 'all'" class="flex items-center bg-blue-100 border border-blue-100/60 rounded px-1.5 py-0.5">
+                  <!-- <span class="text-[9px] uppercase tracking-wider font-bold text-blue-400 mr-1.5">Bank</span> -->
+                  <span class="text-xs font-medium text-blue-700">{{ account.bank }}</span>
+                </div>
+                
+                <!-- Account Number -->
+                <div class="flex items-center bg-teal-100 border border-slate-200 rounded px-1.5 py-0.5">
+                  <span class="text-[9px] uppercase tracking-wider font-bold text-slate-400 mr-1.5">A/C</span>
+                  <span class="text-xs font-mono font-medium text-slate-700">{{ account.accountNumber }}</span>
+                </div>
               </div>
+              
+              <div class="flex gap-2 items-center">
+                <div v-if="(account.phoneNumber || account.collection)" class="flex gap-2 flex-wrap">
+                  <!-- Collection -->
+                  <div v-if="account.collection" class="flex items-center bg-fuchsia-100 border border-purple-100/60 rounded px-1.5 py-0.5">
+                    <span class="text-[9px] uppercase tracking-wider font-bold text-purple-400 mr-1.5">Col</span>
+                    <span class="text-xs font-mono font-medium text-purple-700">{{ account.collection }}</span>
+                  </div>
+                  
+                  <!-- Phone Number -->
+                  <div v-if="account.phoneNumber" class="flex items-center bg-emerald-100 border border-emerald-100/60 rounded px-1.5 py-0.5">
+                    <span class="text-[9px] uppercase tracking-wider font-bold text-emerald-400 mr-1.5">Tel</span>
+                    <span class="text-xs font-mono font-medium text-emerald-700">{{ account.phoneNumber }}</span>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div> 
       </div>
 
-      <div class="bg-slate-100 selection:bg-none select-none border-y border-y-slate-200 flex items-center">
-        <div @click="copyToClipboard" class="p-1 rounded-md hover:bg-black/20 px-1 flex items-center">
-          <SvgCopy v-if="!copied" class="w-7 p-1" src="/tocopy.svg" />
-          <SvgCopied v-else class="w-7 p-1" src="/copied.svg" />
+      <!-- RIGHT SIDE: Actions Menu -->
+      <div class="bg-slate-50 select-none border-y border-y-slate-200 border-l border-l-slate-200 flex items-center px-1.5 shrink-0 gap-1">
+        
+        <button @click="copyToClipboard" class="p-1.5 rounded-md transition-colors hover:bg-slate-200 focus:outline-none flex items-center justify-center">
+          <SvgCopy v-if="!copied" class="w-5 h-5 text-slate-500" src="/tocopy.svg" />
+          <SvgCopied v-else class="w-5 h-5 text-green-500" src="/copied.svg" />
+        </button>
+
+        <div v-if="multiSelect" class="flex items-center">
+          <button 
+            ref="menuToggleElement" 
+            @click="!toggleMenu ? toggleRoute() : null" 
+            :class="[toggleMenu ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'text-slate-500 hover:bg-slate-200']" 
+            class="p-1.5 rounded-md transition-colors focus:outline-none flex items-center justify-center"
+          >
+            <SvgCancel @click="router.back()" v-if="toggleMenu" class="w-5 h-5" />
+            <SvgMore v-else class="w-5 h-5" />
+          </button>
         </div>
 
-        <div @click="toggleSeeMore(account.id)" class="p-1 rounded-md hover:bg-black/20 px-1.5 flex items-center">
-          <SvgView v-if="seeMore === account.id" class="w-5"/>
-          <SvgUnview v-else class="w-5"/>
-        </div>
-
-        <div v-if="multiSelect" class="rounded-md flex items-center">
-          <div ref="menuToggleElement" @click="toggleRoute" :class="[toggleMenu ? 'hover:bg-red-200' : 'hover:bg-black/20']" class="p-1 rounded-md flex items-center">
-            <SvgCancel v-if="toggleMenu" class="w-5" />
-            <SvgMore v-else class="w-5" />
-          </div>
-        </div>
-
-        <div v-if="route.fullPath === `/accounts/_/${account.id}`">
+        <div v-if="toggleMenu" class="absolute right-0 top-full z-10">
           <AccountItemPopUp />
         </div>
+      </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const itemId = computed(() => route.params.id)
-const currentSelection = ref(false)
 
 const selectStore = useSelectStore()
 const {selectedList, ongoingSelection, } = storeToRefs(selectStore)
 const {start, stop} = selectStore
 
 const accountStore = useAccountStore()
-const {selectedBank, seeMore, selectedItemFor_route } = storeToRefs(accountStore)
-
-const toggleMenu = computed(() => {
-  if (typeof route.fullPath === 'string') return route.fullPath === `/accounts/_/${props.account.id}`
-  else return false
-})
+const {selectedBank, selectedItemFor_route } = storeToRefs(accountStore)
 
 const props = defineProps<{
   account: Account,
 }>()
 
-const isItemId = computed(() => itemId.value === props.account.id)
+const toggleMenu = computed(() => {
+  return route.params?.id === props.account.id || route.params?.id_ === props.account.id
+})
 
 watch(toggleMenu, (newVal, oldVal) => {
   if (newVal === true) {
@@ -107,17 +149,8 @@ const multiSelect = computed(() => {
   return selectedList.value.length && selectedList.value.includes(props.account.id)
 })
 
-const toggleSeeMore = (id: string) => seeMore.value === id ? seeMore.value = '' : seeMore.value = id
-
 const toggleRoute = async () => {
-    if (route.fullPath === `/accounts/_/${props.account.id}`) {
-      currentSelection.value = false
-      navigateTo('/accounts/_', {replace: true})
-    }
-    else {
-      currentSelection.value = true
-      navigateTo(`/accounts/_/${props.account.id}`)      
-    }
+  navigateTo(route.fullPath + `/${props.account.id}`)
 }
 
 const nameInitials = computed(() => {
@@ -130,9 +163,5 @@ const nameInitials = computed(() => {
   else initials.push(dividedName[0].slice(0,1))
 
   return initials
-})
-
-watch(ongoingSelection, newVal => {
-  
 })
 </script>
