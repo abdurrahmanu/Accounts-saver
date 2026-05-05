@@ -74,6 +74,7 @@
                 </div>
               </div>
 
+              {{ selectedAccountId }}-----{{ account.id }}
             </div>
           </div>
         </div> 
@@ -89,17 +90,22 @@
 
         <div v-if="multiSelect" class="flex items-center">
           <button 
-            ref="menuToggleElement" 
-            @click="!toggleMenu ? toggleRoute() : null" 
-            :class="[toggleMenu ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'text-slate-500 hover:bg-slate-200']" 
-            class="p-1.5 rounded-md transition-colors focus:outline-none flex items-center justify-center"
-          >
-            <SvgCancel @click="router.back()" v-if="toggleMenu" class="w-5 h-5" />
-            <SvgMore v-else class="w-5 h-5" />
+            v-if="selectedAccountId === account.id"
+            @click="closePopUp" 
+            :class="[selectedAccountId === account.id ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'text-slate-500 hover:bg-slate-200']" 
+            class="p-1.5 rounded-md transition-colors focus:outline-none flex items-center justify-center">
+            <SvgCancel @click="goBack" class="w-5 h-5" />
+          </button>
+          <button 
+            v-else
+            @click="openPopUp" 
+            :class="[selectedAccountId === account.id ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'text-slate-500 hover:bg-slate-200']" 
+            class="p-1.5 rounded-md transition-colors focus:outline-none flex items-center justify-center">
+            <SvgMore class="w-5 h-5" />
           </button>
         </div>
 
-        <div v-if="toggleMenu" class="absolute right-0 top-full z-10">
+        <div :id="selectedAccountId === account.id ? 'selection' : 'no-selection'" v-if="selectedAccountId === account.id" class="absolute right-0 top-full z-10">
           <AccountItemPopUp />
         </div>
       </div>
@@ -111,25 +117,15 @@ const route = useRoute()
 const router = useRouter()
 
 const selectStore = useSelectStore()
-const {selectedList, ongoingSelection, } = storeToRefs(selectStore)
+const {selectedList, ongoingSelection, selectedAccountId } = storeToRefs(selectStore)
 const {start, stop} = selectStore
 
 const accountStore = useAccountStore()
-const {selectedBank, selectedItemFor_route } = storeToRefs(accountStore)
+const {selectedBank,  } = storeToRefs(accountStore)
 
 const props = defineProps<{
   account: Account,
 }>()
-
-const toggleMenu = computed(() => {
-  return route.params?.id === props.account.id || route.params?.id_ === props.account.id
-})
-
-watch(toggleMenu, (newVal, oldVal) => {
-  if (newVal === true) {
-    selectedItemFor_route.value = props.account
-  } else selectedItemFor_route.value = null
-})
 
 const copied = ref(false)
 
@@ -149,8 +145,27 @@ const multiSelect = computed(() => {
   return selectedList.value.length && selectedList.value.includes(props.account.id)
 })
 
-const toggleRoute = async () => {
-  navigateTo(route.fullPath + `/${props.account.id}`)
+const goBack = () => {
+  selectedAccountId.value = ''
+}
+
+const closePopUp = () => {
+  selectedAccountId.value = ''
+  router.back()
+}
+
+const openPopUp = () => {
+  let lastIndexOfSlash = route.fullPath.lastIndexOf('/')
+  let prevSelectId = route.fullPath.slice(lastIndexOfSlash + 1)
+  let correctedRoute = route.fullPath.slice(0, lastIndexOfSlash)
+  
+  if (selectedAccountId.value) {
+    selectedAccountId.value = props.account.id
+    navigateTo(correctedRoute + `/${selectedAccountId.value}`)
+  } else {
+    selectedAccountId.value = props.account.id
+    navigateTo(route.fullPath + `/${selectedAccountId.value}`)
+  }
 }
 
 const nameInitials = computed(() => {

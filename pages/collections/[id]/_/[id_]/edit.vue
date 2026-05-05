@@ -1,5 +1,7 @@
 <template>
     <AppModal :toggle="correctPath">
+        <div class="bg-white">
+        </div>
       <EditAccount :account="editingAccount"  />
     </AppModal>
 </template>

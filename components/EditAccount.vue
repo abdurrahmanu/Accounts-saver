@@ -4,9 +4,9 @@
         <div v-for="(property, value, index) in reducedAccount" :key="index" class="space-y-1">
             <div class="font-medium text-xs text-gray-700 flex items-center justify-between gap-3 ring ring-slate-400 rounded-md">
                 <div class="flex items-center justify-stretch gap-2">
-                    <p class="uppercase px-3 py-1 bg-slate-200 rounded-l-md">{{ labels[value] }}:</p>
+                    <p class="uppercase px-3 py-1 bg-slate-200 rounded-l-md">{{ labels[value as keyof object] }}:</p>
                     <div>
-                        <input v-model="form[value]" :required="requiredFields.includes(property)" type="text" class="inline-block h-full outline-none appearance-none w-full" :placeholder="placeholders[value]">
+                        <input v-model="form[value as keyof object]" :required="requiredFields.includes(property as string)" type="text" class="inline-block h-full outline-none appearance-none w-full" :placeholder="placeholders[value as keyof object]">
                     </div>
                 </div>
             </div>
@@ -29,10 +29,13 @@
 
 <script setup lang="ts">
 const router = useRouter()
-
 const accountStore = useAccountStore()
 const {singleEdit, accounts} = storeToRefs(accountStore)
 const {addAccount} = accountStore
+
+const props = defineProps<{
+    account: Account
+}>()
 
 interface FormFieldInterface {
     name: string | boolean
@@ -44,7 +47,7 @@ interface FormFieldInterface {
     collection: string | boolean  
 }
 
-const account = accounts.value.filter(acc => acc.id === singleEdit.value)[0]
+const account = props.account || accounts.value.filter(acc => acc.id === singleEdit.value)[0]
 
 const requiredFields = ['name', 'accountName', 'bank']
 
@@ -66,8 +69,8 @@ const readOnlyForm = {
     bank: account.bank, 
     accountNumber: account.accountNumber, 
     phoneNumber: account.phoneNumber, 
+    collection: account.collection,
     favourite: account.favourite, 
-    collection: account.collection
 }
 
 const form = reactive({ 
@@ -81,7 +84,6 @@ const form = reactive({
 })
 
 const placeholders = { name: 'Aliyu Musa', nickname: 'MTM', bank: 'Access Bank', accountNumber: '0123456789' , phoneNumber: '081234567', collection: 'Friend'}
-
 const labels = { name: 'Full Name', nickname: 'nickname', bank: 'bank', accountNumber: 'Account Number' , phoneNumber: 'Phone Number', collection: 'Collection'}
 
 const editAccount = () => {    
@@ -98,14 +100,13 @@ const editAccount = () => {
         selected: false,
     }, account.id)
 
-    navigateTo('/accounts/_', {replace: true})
+    router.back()
 }
 
 const formIsChanged = computed(() => {
     return Object.entries(readOnlyForm).some(field => {
         if (typeof field[1] === 'string' && typeof form[field[0] as keyof FormFieldInterface] === 'string') {                        
             return field[1] !== form[field[0] as keyof FormFieldInterface].toString().trim()
-    
         }
         else return field[1] !== form[field[0] as keyof FormFieldInterface]
     })

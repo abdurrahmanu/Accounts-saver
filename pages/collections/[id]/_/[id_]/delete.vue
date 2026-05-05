@@ -1,14 +1,22 @@
 <template>
     <AppModal :toggle="correctPath">
-      <DeleteItems />
+      <DeleteItems :account="deletingAccount" />
     </AppModal>
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
-
 const selectStore = useSelectStore()
 const {selectedList} = storeToRefs(selectStore)
+
+const route = useRoute()
+const itemId = computed(() => route.params?.id_)
+
+const accountStore = useAccountStore()
+const {accounts} = storeToRefs(accountStore)
+
+const deletingAccount = computed(() => {
+    return accounts.value.filter(account => account.id === itemId.value)[0]
+})
 
 const correctPath = computed(() => {    
     if (route.fullPath.length && selectedList.value.length) {

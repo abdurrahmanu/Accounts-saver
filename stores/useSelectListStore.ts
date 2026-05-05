@@ -13,6 +13,7 @@ export const useSelectStore = defineStore('selectList', () => {
   const activateTimer = ref<ReturnType<typeof setTimeout>  | undefined>(undefined)
   const allSelected = ref(false)
   const selectAll = ref(false)
+  const selectedAccountId = ref('')
 
   const selectedAccounts = computed<Account[]>(() => {
     return accountStore.accounts.filter((account: Account) => selectedList.value.includes(account.id))
@@ -64,6 +65,7 @@ export const useSelectStore = defineStore('selectList', () => {
     selectedAccounts,
     selectedList,
     ongoingSelection,
+    selectedAccountId,
     event,
     start,
     stop,

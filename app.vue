@@ -1,4 +1,24 @@
 <script setup lang="ts">
+const selectStore = useSelectStore()
+const {selectedList, ongoingSelection, selectedAccountId } = storeToRefs(selectStore)
+
+const unfocusNodeFn = (event: FocusEvent) => {
+  const clickedElement = event.target
+  const isIgnoreElement = clickedElement instanceof HTMLElement && (clickedElement.id === 'selection' || clickedElement.querySelector(`[id="selection"]`))   
+
+
+  if (isIgnoreElement) {
+    // selectedAccountId.value = ''
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('click', unfocusNodeFn)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', unfocusNodeFn)
+})
 </script>
 
 <template>

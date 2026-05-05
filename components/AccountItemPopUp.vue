@@ -1,5 +1,5 @@
 <template>
-    <div ref="menuElement" id="value" class="absolute -bottom-12 ring ring-slate-400 z-2 right-1 rounded-md bg-slate-200">
+    <div v-if="routeLastName !== 'edit' && routeLastName !== 'delete'" ref="menuElement" class="absolute -bottom-12 ring ring-slate-400 z-2 right-1 rounded-md bg-slate-200">
           <div class="flex gap-2 p-2 justify-center">
             <div @click="toggleFav(account?.id)" class="p-1 rounded-md hover:bg-green-300/30 px-1 flex items-center">
                 <SvgFav v-if="account?.favourite" class="w-5"/>
@@ -16,50 +16,31 @@
 </template>
 
 <script setup lang="ts">
+const modalClosed = ref(true)
 const route = useRoute()
 const itemId = computed(() => route.params.id)
 
 const accountStore = useAccountStore()
-const { accounts, singleEdit, singleDelete, menuToggleElement} = storeToRefs(accountStore)
+const { accounts, singleEdit, singleDelete} = storeToRefs(accountStore)
 const {toggleFav} = accountStore
 
-// const toggleMenu = computed(() => {
-//   if (typeof route.fullPath === 'string') return route.fullPath === `/accounts/_/${itemId.value}`
-//   else return false
-// })
-
-// const menuElement = ref<HTMLElement | null>(null)
+const routeLastName = computed(() => {
+  return route.name?.toString().slice(route.name?.toString().lastIndexOf('-') + 1)
+})
 
 const editAccount = (id: string) => {
   navigateTo(route.fullPath + `/edit`)
   singleEdit.value = id
+  modalClosed.value = false
 }
 
 const delAccount = (id: string) => {
   navigateTo(route.fullPath + `/delete`)
   singleDelete.value = id
+  modalClosed.value = false
 }
-
-// const menuClick = (event: Event) => {      
-//   const target = event.target
-//   const el = menuElement.value
-
-//   if (toggleMenu.value) {    
-//     if (el instanceof HTMLElement && (target !== menuToggleElement.value && !menuToggleElement.value?.contains(target as ChildNode)) && !(el === target || el.contains(target as Node) || event.composedPath().includes(el))) {
-//         navigateTo('/accounts/_', {replace: true})
-//       }
-//   }  
-// }
 
 const account = computed<Account>(() => {
   return accounts.value.filter(acc => acc.id === itemId.value)[0]
 })
-
-// onMounted(() => {
-//   window.addEventListener('click', menuClick)
-// })
-
-// onUnmounted(() => {
-//   window.removeEventListener('click', menuClick)
-// })
 </script>
