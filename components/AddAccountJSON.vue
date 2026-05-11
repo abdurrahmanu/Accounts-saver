@@ -16,19 +16,6 @@
       Import Pasted JSON
     </button>
     
-    <!-- <div class="py-4 space-y-2">
-      <div class="text-sm text-gray-500 font-medium">Upload a json file:</div>
-      <div class="flex items-center">
-        <input 
-        type="file" 
-        accept="application/json" 
-        @change="handleFileUpload" 
-        ref="fileInput"
-        class="text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
-        >
-      </div>
-    </div> -->
-    
     <p v-if="importMessage" :class="importSuccess ? 'text-green-600' : 'text-red-600'" class="text-sm mt-3 font-medium text-center p-2 rounded bg-gray-50">
       {{ importMessage }}
     </p>

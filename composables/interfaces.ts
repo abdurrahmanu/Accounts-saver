@@ -19,5 +19,5 @@ export interface Account {
   favourite: boolean
   phoneNumber: string
   collection: string
-  collections?: []
+  collections?: string
 }

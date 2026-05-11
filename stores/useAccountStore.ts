@@ -31,6 +31,7 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   const addAccount = (account: Omit<Account, 'id'>, id?: string) => {        
     let accountAlreadyExists = id
+  
 
     if (accountAlreadyExists) {      
       accounts.value = accounts.value.map(acc => {
@@ -67,6 +68,9 @@ export const useAccountStore = defineStore('accountStore', () => {
     }
 
     toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value
+    selectStore.selectedList = selectStore.selectedList.filter(item => {
+      return !del_.includes(item)
+    })    
   }
 
   // Getters
