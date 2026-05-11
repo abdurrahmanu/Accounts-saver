@@ -19,7 +19,7 @@ export const useSelectStore = defineStore('selectList', () => {
     return accountStore.accounts.filter((account: Account) => selectedList.value.includes(account.id))
   })
 
-  const start = (event: Event, id: string): boolean | void => {                       
+  const start = (event: Event, id: string) => {                       
     let alreadySelectedItem = selectedList.value.indexOf(id)
     if (alreadySelectedItem !== -1) {      
       allSelected.value = false              

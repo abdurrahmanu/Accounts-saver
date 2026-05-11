@@ -43,8 +43,8 @@ onUnmounted(() => {
 </template>
 
 <style>
-.custom-scrollbar::-webkit-scrollbar { width: 2px; height: 3px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: rgb(211, 206, 206); }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(10, 10, 10, 0.3); border-radius: 4px; }
-.custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(10, 10, 10, 0.5); }
+.custom-scrollbar::-webkit-scrollbar { width: 3px; height: 3px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgb(233, 228, 228); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.3); border-radius: 4px; }
+.custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.5); }
 </style>

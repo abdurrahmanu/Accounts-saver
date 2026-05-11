@@ -32,10 +32,8 @@ const accountsToShow = computed<Account[]>(() => {
 </script>
 
 <template>
-    <div>
-        <AccountList :accounts_="accountsToShow" />
-        <NuxtPage />
-    </div>
+    <AccountList :accounts_="accountsToShow" />
+    <NuxtPage />
 </template>
 
 
