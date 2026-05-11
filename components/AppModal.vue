@@ -1,5 +1,5 @@
 <template>
-    <div @click.self="startClose" class="z-3 bg-black/80 absolute top-0 left-0 bottom-0 right-0 flex items-end pb-20">
+    <div id="toggle-popup" @click.self="startClose" class="z-3 bg-black/80 absolute top-0 left-0 bottom-0 right-0 flex items-end pb-20">
         <transition name="slide-in" appear @after-leave="navigateBack">
             <div v-if="localToggle" class="max-w-130 w-[90%] h-fit mx-auto z-4 rounded-md p-3 bg-white">
                 <slot/>
@@ -9,9 +9,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-
 const router = useRouter()
 const props = defineProps<{
     toggle: boolean

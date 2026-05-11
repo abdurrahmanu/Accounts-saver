@@ -1,7 +1,9 @@
 <template>
-    <AppModal :toggle="correctPath">
-      <DeleteItems />
-    </AppModal>
+    <div>
+        <AppModal :toggle="correctPath">
+            <DeleteAccounts />
+        </AppModal>
+    </div>
 </template>
 
 <script setup lang="ts">

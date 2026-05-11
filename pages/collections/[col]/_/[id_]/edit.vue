@@ -1,9 +1,11 @@
 <template>
-    <AppModal :toggle="correctPath">
-        <div class="bg-white">
-        </div>
-      <EditAccount :account="editingAccount"  />
-    </AppModal>
+    <div>
+        <AppModal :toggle="correctPath">
+            <div class="bg-white">
+            </div>
+            <EditAccount :account="editingAccount"  />
+        </AppModal>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -19,7 +21,7 @@ const editingAccount = computed(() => {
 
 const correctPath = computed(() => {    
     if (route.fullPath.length && itemId.value) {
-        return route.fullPath === `/collections/${route.params.id}/_/${route.params.id_}/edit`
+        return route.fullPath === `/collections/${route.params.col}/_/${route.params.id_}/edit`
     }
     else return false
 }) 

@@ -1,7 +1,6 @@
 // middleware/route-cleanup.global.ts
 
 export default defineNuxtRouteMiddleware((to, from) => {
-
     const selectMode = useSelectStore()
     const { selectedList, ongoingSelection } = storeToRefs(selectMode)
 
@@ -17,14 +16,15 @@ export default defineNuxtRouteMiddleware((to, from) => {
         }
         
         if (to.fullPath.includes('accounts/_')) {            
-            return navigateTo('/', {replace: true})
+            return navigateTo('/accounts', {replace: true})
         }
+        
         if (to.fullPath.includes('collections/_')) {            
-            return navigateTo('/', {replace: true})
+            return navigateTo('/collections', {replace: true})
         }
     }
 
-    if (!to.path.includes('/_') && from.path.includes('/_')) {
+    if (!to.path.includes('/_') && from.path.includes('/_')) {        
         selectedList.value = []
         ongoingSelection.value = false
     }

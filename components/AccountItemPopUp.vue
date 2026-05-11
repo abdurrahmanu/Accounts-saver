@@ -1,5 +1,5 @@
 <template>
-    <div v-if="routeLastName !== 'edit' && routeLastName !== 'delete'" ref="menuElement" class="absolute -bottom-12 ring ring-slate-400 z-2 right-1 rounded-md bg-slate-200">
+    <div id="popup" v-if="routeLastName !== 'edit' && routeLastName !== 'delete'" ref="menuElement" class="absolute -bottom-12 ring ring-slate-400 z-2 right-1 rounded-md bg-slate-200">
           <div class="flex gap-2 p-2 justify-center">
             <div @click="toggleFav(account?.id)" class="p-1 rounded-md hover:bg-green-300/30 px-1 flex items-center">
                 <SvgFav v-if="account?.favourite" class="w-5"/>

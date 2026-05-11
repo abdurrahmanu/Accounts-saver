@@ -20,7 +20,7 @@
                 <span class="text-sm">Add to Favorites</span>
             </div>
             <div class="space-x-2">
-                <button @click="navigateTo('/accounts/_', {replace: true})" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
+                <button @click="router.back()" class="ring px-5 py-1 bg-red-300 hover:bg-red-300 ring-slate-300 rounded-md">CLOSE</button>
                 <button v-if="formIsChanged" type="submit" class="ring px-5 py-1 bg-green-300 hover:bg-green-300 ring-slate-300 rounded-md">SAVE</button>
             </div>
         </form>
@@ -34,7 +34,7 @@ const {singleEdit, accounts} = storeToRefs(accountStore)
 const {addAccount} = accountStore
 
 const props = defineProps<{
-    account: Account
+    account?: Account
 }>()
 
 interface FormFieldInterface {

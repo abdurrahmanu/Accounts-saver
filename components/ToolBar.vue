@@ -13,16 +13,15 @@ const {toggleFav} = accountStore
 
 const selectMode = useSelectStore()
 const { selectedList, ongoingSelection, allSelected, selectAll } = storeToRefs(selectMode)
-const { cancel, } = selectMode
+const { cancel } = selectMode
 
 const collectionStore = useCollectionStore()
-const {view, collections } = storeToRefs(collectionStore)
+const { collections } = storeToRefs(collectionStore)
 
 const options = computed(() => {
-  const isAccountsRoute = computed(() => route.fullPath === '/accounts/_' || route.fullPath === '/accounts/_/')
-
+  const isAccountsRoute = computed(() => route.fullPath.startsWith('/accounts'))
   const count = selectedList.value.length
-  const total = view.value === 'bank' ? accounts.value.length : collections.value.length
+  const total = isAccountsRoute.value ? accounts.value.length : collections.value.length
 
   return [
     { id: isAccountsRoute.value ? 'sort' : 'move',
@@ -44,7 +43,6 @@ const options = computed(() => {
   ].filter(item => item !== false)
 })
 
-// 3. Centralized Action Handler
 const useOption = (id: string) => {
   switch (id) {
     case 'move':
@@ -73,27 +71,22 @@ const useOption = (id: string) => {
   }
 }
 
-const showToolBar = computed(() => {
-  return ongoingSelection.value
-})
+const showToolBar = computed(() => ongoingSelection.value )
 </script>
 
 <template>
-  <!-- Fixed wrapper to handle centering without messing up CSS transforms -->
-  <div class="fixed inset-x-0 bottom-6 z-50 flex justify-center pointer-events-none px-4">
+  <div v-if="!route.fullPath.endsWith('/delete') && !route.fullPath.endsWith('/edit')" class="fixed inset-x-0 bottom-6 z-50 flex justify-center pointer-events-none px-4">
     <transition name="slide-up">
       
       <div 
         v-if="showToolBar" 
         class="pointer-events-auto relative w-full max-w-sm bg-white/90 backdrop-blur-lg shadow-2xl shadow-black/10 border border-gray-200/60 rounded-2xl p-1">
         
-        <!-- Selection Count Badge -->
         <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md z-10 flex items-center gap-1">
           <span>{{ selectedList.length }}</span>
           <span>Selected</span>
         </div>
 
-        <!-- Action Buttons -->
         <div class="flex items-center justify-between">
           <button 
             v-for="option in options" 
@@ -115,10 +108,9 @@ const showToolBar = computed(() => {
 </template>
 
 <style scoped>
-/* Smooth, spring-like slide up animation */
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy spring effect */
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .slide-up-enter-from,

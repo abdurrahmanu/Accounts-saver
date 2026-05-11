@@ -3,7 +3,6 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   const collectionStore = useCollectionStore()
   const selectStore = useSelectStore()
-  const view = computed(() => collectionStore.view)
   
   const sortAccounts = ref(false)
   const selectedItemFor_route = ref<Account | null>(null)
@@ -21,13 +20,13 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   if (import.meta.client) {
     const saved = localStorage.getItem('my-saved-accounts')
-    if (saved) {
-      accounts.value = JSON.parse(saved)
-    }
+    if (saved) accounts.value = JSON.parse(saved)
   }
 
-  watch(accounts, (newAccounts, oldAccounts) => {  
-    if (import.meta.client) localStorage.setItem('my-saved-accounts', JSON.stringify(newAccounts))
+  watch(accounts, (newAccounts) => {  
+    if (import.meta.client) {
+      localStorage.setItem('my-saved-accounts', JSON.stringify(newAccounts))
+    }
   }, { deep: true })
 
   const addAccount = (account: Omit<Account, 'id'>, id?: string) => {        
@@ -47,29 +46,25 @@ export const useAccountStore = defineStore('accountStore', () => {
       })
     }    
 
-    // Create New Collection
     if (account.collection && !collectionStore.collections.includes(account.collection)) {      
-      collectionStore.createCollection({name: account.collection.toLowerCase(), selectedAccounts: {[id as keyof object]: true}})
+      collectionStore.createCollection({
+        name: account.collection.toLowerCase(), 
+        selectedAccounts: {[id as keyof object]: true}
+      })
     }
   }
 
   const deleteItems = (del_: string[]) => {                   
-    if (view.value === 'collections') {
-      collectionStore.deleteCollection()
-    }      
+    if(del_.length === accounts.value.length) {
+      accounts.value = []
+    } else {
+      let id = ''
 
-    else if (view.value === 'bank') {
-      if(del_.length === accounts.value.length) {
-        accounts.value = []
-      } else {
-        let id = ''
-
-        for (let index = 0; index < del_.length; index++) {  
-          id = del_[index];
-          accounts.value = accounts.value.filter(acc => acc.id !== id)
-        }      
-      }
-     }
+      for (let index = 0; index < del_.length; index++) {  
+        id = del_[index];
+        accounts.value = accounts.value.filter(acc => acc.id !== id)
+      }      
+    }
 
     toggleDeleteAccountModal.value = !toggleDeleteAccountModal.value
   }
@@ -120,9 +115,9 @@ export const useAccountStore = defineStore('accountStore', () => {
     singleEdit,
     addNewAccount,
     menuToggleElement,
-    toggleFav,
     toggleEditAccountModal,
     openAccountsDropdown,
+    toggleFav,
     addAccount,
     deleteItems
   }

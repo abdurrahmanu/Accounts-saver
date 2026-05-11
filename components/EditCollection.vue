@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const router = useRouter()
+
 const collectionStore = useCollectionStore()
 const {selectedCollection} = storeToRefs(collectionStore)
 const {editCollection} = collectionStore
@@ -34,7 +36,7 @@ const formIsChanged = computed(() => {
 
 const editForm = () => {
     editCollection(form)
-    navigateTo('/collections', {replace: true})
+    router.back()
 }
 </script>
 

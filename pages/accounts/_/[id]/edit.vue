@@ -1,7 +1,9 @@
 <template>
-    <AppModal :toggle="correctPath">
-      <EditAccount :account="editingAccount"  />
-    </AppModal>
+    <div>
+        <AppModal :toggle="correctPath">
+            <EditAccount :account="editingAccount"  />
+        </AppModal>
+    </div>
 </template>
 
 <script lang="ts" setup>

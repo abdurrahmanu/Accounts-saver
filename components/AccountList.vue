@@ -2,8 +2,10 @@
   <div class="flex flex-col flex-1 overflow-auto">
     <div class="flex justify-between items-center py-5">
       <div class="flex gap-3 px-2 text-xs">
-        <SvgBack v-if="route.fullPath.includes('collections')" @click="$router.back" class="w-5" />
-        <h3 v-if="route.fullPath.includes('collections')" class="uppercase font-bold  px-2 py-1 bg-slate-200 rounded-md">{{ route.params.id }}</h3>
+        <div v-if="route.fullPath.includes('collections')" @click="router.back()" class="w-fit h-fit">
+          <SvgBack class="w-5" />
+        </div>
+        <h3 v-if="route.fullPath.includes('collections')" class="uppercase font-bold  px-2 py-1 bg-slate-200 rounded-md">{{ route.params.id || route.params.col }}</h3>
         <p v-else class="font-bold px-2 py-1 bg-slate-200 rounded-md">ACCOUNTS</p>
       </div>
       <p v-if="accounts_?.length" class="uppercase mr-2 ring ring-slate-300 flex items-center gap-1 px-1 py-0.5 bg-slate-200 rounded-md font-medium">
@@ -18,7 +20,7 @@
       <p>Add some accounts</p>
     </div>
     
-    <div v-if="accounts_?.length" class="overflow-y-scroll flex-1 pb-20">
+    <div v-if="accounts_?.length" class="overflow-y-scroll flex-1 pb-20 custom-scrollbar">
       <div v-for="acc in accounts_" :key="acc.id" class="bg-white">
         <AccountItem :account="acc" />
       </div>
@@ -28,6 +30,7 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const router = useRouter()
 
 const props = defineProps<{
   accounts_?: Account[]

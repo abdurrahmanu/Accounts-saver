@@ -1,8 +1,3 @@
-import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
-import { type Account } from '#imports'
-
-
 export const useCollectionStore = defineStore('accountsCollection', () => {
   const accountStore = useAccountStore()
   const listStore = useSelectStore()
@@ -13,6 +8,7 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
   const selectedCollection = ref('')
   const currentCollection = ref('')
   const toggleEditCollectionModal = ref(false)
+  const toggleDeleteCollectionModal = ref(false)
 
   if (import.meta.client) {
     const saved = localStorage.getItem('my-saved-collections')
@@ -51,15 +47,14 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
 
   const editCollection = (form: collectionForm) => {
     accountStore.accounts = accountStore.accounts.map((acc: Account) => {
-      // had collection name but no longer has
       if (acc.collection === selectedCollection.value && !form.selectedAccounts[acc.id as keyof object]) {
         return {...acc, collection: ''}
       }
-      // had collection but name is changed
+
       else if (acc.collection === selectedCollection.value) {
         return {...acc, collection: form.name.toLowerCase()}
       }
-      // didn't have collection name but it has now
+
       else if (form.selectedAccounts[acc.id as keyof object]) {
         return {...acc, collection: form.name.toLowerCase()}
       }
@@ -75,32 +70,24 @@ export const useCollectionStore = defineStore('accountsCollection', () => {
   }
 
   const deleteCollection = () => {
-    // delete collection
     collections.value.forEach((col, index) => {
       if (listStore.selectedList.includes(col)) {
         collections.value.splice(index, 1)
       }
     })
 
-    // clear collection from accounts
     accountStore.accounts = accountStore.accounts.map(account => {
       let index = listStore.selectedList.indexOf(account.collection)
       if (index !== -1) {
         return {...account, collection: ''}
       } else return account
     })
-
-    // if no account contains the collection, delete?
   }
 
-  const showAccountsList = computed(() => {
-    return view.value === 'bank' || (view.value === 'collections')
-  })
-
   return { 
-    showAccountsList,
     currentCollection,
     toggleEditCollectionModal,
+    toggleDeleteCollectionModal,
     filteredCollections,
     selectedCollection,
     editCollection,

@@ -11,9 +11,8 @@
       </div>
       
       <div class="flex items-center w-full gap-2">
-
-        <div :class="[!accounts.length ? 'bg-transparent' : 'bg-white']" class="rounded-md w-[75%]">
-          <ul v-if="accounts.length" class="flex leading-0 p-2 gap-2 flex-wrap content-start h-20 overflow-y-scroll">
+        <div :class="[!accounts.length ? 'bg-transparent' : 'bg-white']" class="rounded-sm w-[75%]">
+          <ul v-if="accounts.length" class="flex leading-0 p-2 gap-2 flex-wrap content-start h-20 overflow-y-scroll custom-scrollbar">
             <li 
             @click="selectedBank = 'favourites'"
             :class="{'selected': selectedBank === 'favourites', 'ring-slate-300': selectedBank !== 'favourites',}" 
@@ -42,18 +41,13 @@
 <script setup lang="ts">
 const accountStore = useAccountStore()
 const {uniqueBanks, selectedBank, searchQuery, accounts} = storeToRefs(accountStore)
-
-const selectStore = useSelectStore()
-const {cancel} = selectStore
-
-// const listStyle = `w-fit h-fit px-3 hover:bg-green-200 transition-colors duration-150 cursor-pointer py-0.5 whitespace-nowrap text-xs ring-1 rounded-md`
 </script>
 
 <style scoped>
 @reference "tailwindcss";
 
 .list-item {
-  @apply w-fit h-fit px-2 hover:bg-green-200 transition-colors duration-150 cursor-pointer whitespace-nowrap text-xs ring-1 rounded-md
+  @apply w-fit h-fit px-2 hover:bg-green-200 transition-colors duration-150 cursor-pointer whitespace-nowrap text-xs ring-1 rounded-sm
 }
 
 .selected {

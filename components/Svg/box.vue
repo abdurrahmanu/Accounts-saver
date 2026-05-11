@@ -2,7 +2,7 @@
     <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
-<svg width="256px" height="256px" viewBox="0 0 1024.00 1024.00" class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#050505" stroke="#050505" stroke-width="0.01024">
+<svg class="icon pointer-events-none" width="256px" height="256px" viewBox="0 0 1024.00 1024.00" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="#050505" stroke="#050505" stroke-width="0.01024">
 
 <g id="SVGRepo_bgCarrier" stroke-width="0"/>
 

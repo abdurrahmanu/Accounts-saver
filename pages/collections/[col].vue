@@ -5,7 +5,7 @@ const accountstore = useAccountStore()
 const {accounts, selectedBank, searchQuery} = storeToRefs(accountstore)
 
 const accountsInCollection = computed(() => {
-    return accounts.value.filter(account => account.collection === route.params.id)
+    return accounts.value.filter(account => account.collection === route.params.col)
 })
 
 const accountsToShow = computed<Account[]>(() => {

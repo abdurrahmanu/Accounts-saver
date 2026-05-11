@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useSelectStore = defineStore('selectList', () => {
-  const router = useRouter()
   const route = useRoute()
+  const router = useRouter()
   const collectionStore = useCollectionStore()
   const accountStore = useAccountStore()
   const ongoingSelection = ref(false)
@@ -19,7 +19,7 @@ export const useSelectStore = defineStore('selectList', () => {
     return accountStore.accounts.filter((account: Account) => selectedList.value.includes(account.id))
   })
 
-  const start = (event: Event, id: string) => {                   
+  const start = (event: Event, id: string): boolean | void => {                       
     let alreadySelectedItem = selectedList.value.indexOf(id)
     if (alreadySelectedItem !== -1) {      
       allSelected.value = false              
@@ -34,16 +34,16 @@ export const useSelectStore = defineStore('selectList', () => {
         activateTimer.value = setTimeout(() => {                    
           selectedList.value.push(id)         
           ongoingSelection.value = true
-          navigateTo(route.path + '/_')
+          navigateTo(route.path + '/_') 
         }, activateDelay)
       }
     }      
   }
 
-  const stop = (event: Event, id: string, openCol?: boolean) => {    
+  const stop = (event: Event, id: string, colRoute?: boolean) => {        
     if (selectedList.value.length) return
     if (activateTimer.value) {
-      if(!ongoingSelection.value) {                
+      if(!ongoingSelection.value && colRoute) {                        
         collectionStore.openCollection(id)          
       }
       clearTimeout(activateTimer.value)
@@ -51,12 +51,10 @@ export const useSelectStore = defineStore('selectList', () => {
   }
 
   const cancel = (clearSelectAll?: boolean) => {    
-    if (!clearSelectAll) {
-      ongoingSelection.value = false
-    }
+    if (!clearSelectAll) ongoingSelection.value = false 
     router.back()
     selectedList.value = []
-    allSelected.value = false
+    allSelected.value = false    
   }
 
   return { 

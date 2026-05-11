@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-const route = useRoute()
-
 const accountStore = useAccountStore()
 const {selectedBank} = storeToRefs(accountStore)
 

@@ -44,7 +44,7 @@ pwa: {
       ]
     },
     workbox: {
-      globPatterns: process.env.NODE_ENV === 'development' ? [] : ['**/*.{js,css,html,png,svg,ico,mjs}'],
+      globPatterns: process.env.NODE_ENV === 'development' ? [] : ['**/*.{js,css,html,png,svg,mjs}'],
       navigateFallback: '/',
       cleanupOutdatedCaches: true,
       clientsClaim: true,

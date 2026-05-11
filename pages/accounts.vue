@@ -24,9 +24,13 @@ const accountsToShow = computed<Account[]>(() => {
 
     return result
 })
+
+const showAccountsList = computed(() => !route.fullPath.endsWith('/addAccount'))
 </script>
 
 <template>
-    <AccountList v-if="!route.fullPath.includes('/addAccount')" :accounts_="accountsToShow" />
-    <NuxtPage />
+    <div>
+        <AccountList v-if="showAccountsList" :accounts_="accountsToShow" />
+        <NuxtPage />
+    </div>
 </template>

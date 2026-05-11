@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 const accountsCollection = useCollectionStore()
-const {openCollection} = accountsCollection
-const { toggleEditCollectionModal, selectedCollection} = storeToRefs(accountsCollection)
+const { toggleEditCollectionModal, toggleDeleteCollectionModal, selectedCollection} = storeToRefs(accountsCollection)
 
 const selectMode = useSelectStore()
 const {selectedList, ongoingSelection} = storeToRefs(selectMode)
-const {start, stop, cancel} = selectMode
+const {start, stop} = selectMode
 
 const accountStore = useAccountStore()
 const {accounts, selectedBank} = storeToRefs(accountStore)
@@ -27,7 +26,14 @@ const numberOfAccountsInCollectionFilter = computed(() => {
 
 const editCollection = () => {  
   selectedCollection.value = props.collection  
-  toggleEditCollectionModal.value = !toggleEditCollectionModal.value  
+  toggleEditCollectionModal.value = !toggleEditCollectionModal.value    
+  navigateTo(`/collections/_/${props.collection}/edit`)
+}
+
+const deleteCollection = () => {
+  selectedCollection.value = props.collection
+  toggleDeleteCollectionModal.value = !toggleDeleteCollectionModal.value
+  navigateTo(`/collections/_/${props.collection}/delete`)
 }
 </script>
 
@@ -47,7 +53,10 @@ const editCollection = () => {
         <p>{{ collection }}</p>
         <p class="text-xs py-2">{{ numberOfAccountsInCollectionFilter ? numberOfAccountsInCollectionFilter + ' accounts' : '' }}</p>
       </div>
-      <SvgEdit @pointerdown.stop @pointerup.stop @pointercancel.stop @click.stop="editCollection" v-if='selectedList.includes(collection)' class="w-6 absolute bottom-2 right-2" />
+      <div class="flex">
+        <SvgEdit @pointerdown.stop @pointerup.stop @pointercancel.stop @click.stop="editCollection" v-if='selectedList.includes(collection)' class="w-5 absolute bottom-2 right-8" />
+        <SvgDelete @pointerdown.stop @pointerup.stop @pointercancel.stop @click.stop="deleteCollection" v-if='selectedList.includes(collection)' class="w-5 absolute bottom-2 right-1" />
+      </div>
     </div>
   </NuxtLink>
 </template>

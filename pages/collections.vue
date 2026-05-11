@@ -1,13 +1,16 @@
 <script setup lang="ts">
 const route = useRoute()
-const collectionHome = computed(() => {
-    return (route.fullPath === '/collections' || route.fullPath === '/collections/_')
+const showCollectionList = computed(() => {
+    return (
+        !route.fullPath.endsWith('/addCol') &&
+        !route.params?.col
+    )
 })
 </script>
  
 <template>
     <div>
-        <Collections v-if="collectionHome" />
+        <Collections v-if="showCollectionList" />
         <NuxtPage />
     </div>
 </template>

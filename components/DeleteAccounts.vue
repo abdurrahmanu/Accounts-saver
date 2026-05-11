@@ -3,16 +3,16 @@
         <div class="`max-w-125 w-[95%] mx-auto rounded-md space-y-3 bg-slate-100 relative p-2">            
             <p class="text-center text-black font-medium flex justify-center gap-1">
                 <span class="text-red-500">Delete</span> 
-                <span v-if="itemId" class="uppercase">{{ account?.name }}</span>
+                <span v-if="account.length == 1" class="uppercase">{{ account[0]?.name }}</span>
                 <div v-else>
-                     <span v-if="selectedList.length > 1"> these <span class="text-red-700 font-bold">{{ selectedList.length }}</span> {{ view === 'bank' ? 'accounts' : 'collections' }}</span>
-                    <span v-else class="text-red-700 font-bold">Single {{ view === 'bank' ? 'account' : 'collection' }}</span>
+                     <span v-if="account.length > 1"> these <span class="text-red-500 font-bold">{{ account.length }}</span> Accounts</span>
+                    <span v-else class="text-red-500 font-bold">Account</span>
                 </div>
             </p>
 
-            <div v-if="itemId" class="text-center flex w-fit justify-center gap-2 mx-auto">
-                <p class="rounded-md w-fit mx-auto">{{ account?.bank}}</p>
-                <p class="rounded-md w-fit mx-auto">({{ account?.accountNumber}})</p>
+            <div v-if="account.length === 1" class="text-center flex w-fit justify-center gap-2 mx-auto">
+                <p class="rounded-md w-fit mx-auto">{{ account[0]?.bank}}</p>
+                <p class="rounded-md w-fit mx-auto">({{ account[0]?.accountNumber}})</p>
             </div>
 
             <div class="flex gap-4 justify-center mt-4">
@@ -23,30 +23,31 @@
     </div>
 </template>
 
-<script setup lang="ts">
-const props = defineProps<{
-    account: Account
-}>()
 
+<script setup lang="ts">
 const route = useRoute()
 const router = useRouter()
-const itemId = computed(() => route.params.id)
+const itemId = computed(() => route.params?.id ? route.params?.id : route.params?.id_ ? route.params.id_ : null)
 
 const accountStore = useAccountStore()
 const { deleteItems } = accountStore
 const { singleDelete, accounts } = storeToRefs(accountStore)
 
-const collectionStore = useCollectionStore()
-const {view} = storeToRefs(collectionStore)
+const selectStore = useSelectStore()
+const { selectedList } = storeToRefs(selectStore)
 
-const selectList = useSelectStore()
-const { selectedList } = storeToRefs(selectList)
-
-const account = props.account || accounts.value.filter(acc => acc.id === itemId.value)[0]
+const account = computed<Account[]>(() => {
+    if (itemId.value) {
+        return accounts.value.filter(acc => acc.id === itemId.value)
+    } else {        
+        return accounts.value.filter(acc => {
+            return selectedList.value.includes(acc.id)
+        })
+    }
+})
 
 const handleDelete = () => {    
     deleteItems(singleDelete.value ? [singleDelete.value] : selectedList.value)
-    router.back()
     router.back()
 }
 </script>
